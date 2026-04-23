@@ -45,7 +45,7 @@ const Ask = () => {
     <>
       <AppHeader title="Ask Your Data" subtitle="Turn raw on-chain activity into actionable insights" />
 
-      <div className="flex-1 overflow-hidden px-4 md:px-8 pb-8 flex flex-col">
+      <div className="flex-1 px-4 md:px-8 py-6 pb-8 flex flex-col min-h-[calc(100vh-9rem)]">
         <Card className="flex-1 rounded-2xl border-border/60 flex flex-col overflow-hidden">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">

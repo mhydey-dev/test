@@ -33,7 +33,7 @@ const Access = () => {
     <>
       <AppHeader title="Data Access" subtitle="Control what dApps see — and earn from every query" />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8 space-y-6">
+      <div className="flex-1 px-4 md:px-8 py-6 space-y-6">
         {/* Earnings stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="rounded-2xl border-border/60 p-5">

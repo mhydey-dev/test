@@ -6,27 +6,25 @@ import {
   Lock,
   Activity,
   Sparkles,
-  Code2,
   Settings,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { title: "Overview",      url: "/",            icon: LayoutDashboard },
-  { title: "Trust Score",   url: "/score",       icon: Shield },
-  { title: "ZK Proofs",     url: "/proofs",      icon: Lock },
-  { title: "Data Access",   url: "/access",      icon: Activity },
-  { title: "Ask Your Data", url: "/ask",         icon: Sparkles },
-  { title: "Developers",    url: "/developers",  icon: Code2 },
+  { title: "Overview", url: "/", icon: LayoutDashboard },
+  { title: "Credit Score", url: "/score", icon: Shield },
+  { title: "ZK Proofs", url: "/proofs", icon: Lock },
+  { title: "Data Access", url: "/access", icon: Activity },
+  { title: "Notifications", url: "/notifications", icon: Bell },
+  { title: "Persona", url: "/persona", icon: Sparkles },
 ];
 
-const bottomItems = [
-  { title: "Settings", url: "/settings", icon: Settings },
-];
+const bottomItems = [{ title: "Settings", url: "/settings", icon: Settings }];
 
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -44,7 +42,7 @@ const AppSidebar = () => {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={cn(
         "flex flex-col my-4 ml-4 h-[calc(100vh-2rem)] bg-card border border-border/60 rounded-2xl transition-all duration-300",
-        collapsed ? "w-[72px]" : "w-60"
+        collapsed ? "w-[72px]" : "w-60",
       )}
     >
       <div className="flex items-center justify-between p-4 border-b border-border/40">
@@ -76,14 +74,16 @@ const AppSidebar = () => {
               "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
               isActive(item.url)
                 ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
             )}
           >
             <item.icon
               size={18}
               className={cn(
                 "transition-colors shrink-0",
-                isActive(item.url) ? "text-foreground" : "group-hover:text-foreground"
+                isActive(item.url)
+                  ? "text-foreground"
+                  : "group-hover:text-foreground",
               )}
             />
             <AnimatePresence>
@@ -111,7 +111,7 @@ const AppSidebar = () => {
               "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
               isActive(item.url)
                 ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
             )}
           >
             <item.icon size={18} className="shrink-0" />

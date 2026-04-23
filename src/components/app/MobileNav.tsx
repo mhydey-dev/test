@@ -6,23 +6,23 @@ import {
   Lock,
   Activity,
   Sparkles,
-  Code2,
   Settings,
   Menu,
   ShieldCheck,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
-  { title: "Overview",      url: "/",            icon: LayoutDashboard },
-  { title: "Trust Score",   url: "/score",       icon: Shield },
-  { title: "ZK Proofs",     url: "/proofs",      icon: Lock },
-  { title: "Data Access",   url: "/access",      icon: Activity },
-  { title: "Ask Your Data", url: "/ask",         icon: Sparkles },
-  { title: "Developers",    url: "/developers",  icon: Code2 },
-  { title: "Settings",      url: "/settings",    icon: Settings },
+  { title: "Overview", url: "/", icon: LayoutDashboard },
+  { title: "Credit Score", url: "/score", icon: Shield },
+  { title: "ZK Proofs", url: "/proofs", icon: Lock },
+  { title: "Data Access", url: "/access", icon: Activity },
+  { title: "Notifications", url: "/notifications", icon: Bell },
+  { title: "Persona", url: "/persona", icon: Sparkles },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export const MobileNav = () => {
@@ -63,7 +63,7 @@ export const MobileNav = () => {
                     "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200",
                     isActive(item.url)
                       ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
                   )}
                 >
                   <item.icon size={20} />
@@ -82,11 +82,11 @@ export const MobileBottomNav = () => {
   const location = useLocation();
 
   const bottomItems = [
-    { title: "Overview",  url: "/",        icon: LayoutDashboard },
-    { title: "Score",     url: "/score",   icon: Shield },
-    { title: "Proofs",    url: "/proofs",  icon: Lock,     primary: true },
-    { title: "Access",    url: "/access",  icon: Activity },
-    { title: "Ask",       url: "/ask",     icon: Sparkles },
+    { title: "Overview", url: "/", icon: LayoutDashboard },
+    { title: "Score", url: "/score", icon: Shield },
+    { title: "Proofs", url: "/proofs", icon: Lock, primary: true },
+    { title: "Access", url: "/access", icon: Activity },
+    { title: "Alerts", url: "/notifications", icon: Bell },
   ];
 
   const isActive = (path: string) => {
@@ -107,7 +107,7 @@ export const MobileBottomNav = () => {
                 ? "bg-primary text-primary-foreground rounded-full p-3 -mt-6"
                 : isActive(item.url)
                   ? "text-primary"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground",
             )}
           >
             <item.icon size={item.primary ? 22 : 20} />

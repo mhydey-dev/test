@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MobileNav } from "@/components/app/MobileNav";
 import { Link } from "react-router-dom";
+import { ConnectButton } from "@mysten/dapp-kit-react/ui";
 
 interface AppHeaderProps {
   title: string;
@@ -15,7 +16,7 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
     <motion.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="sticky top-0 z-30 h-16 md:h-20 flex items-center justify-between px-4 md:px-8 bg-background/80 backdrop-blur-md border-b border-border/40"
+      className="sticky top-0 z-30 h-16 md:h-20 flex items-center justify-between px-4 md:px-8 bg-background/20 backdrop-blur-md"
     >
       <div className="flex items-center gap-3">
         <MobileNav />
@@ -31,7 +32,9 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
             {title}
           </h1>
           {subtitle && (
-            <p className="hidden md:block text-xs text-muted-foreground">{subtitle}</p>
+            <p className="hidden md:block text-xs text-muted-foreground">
+              {subtitle}
+            </p>
           )}
         </div>
       </div>
@@ -43,16 +46,13 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
           className="hidden sm:flex gap-2 rounded-xl border-border/60 hover:border-border hover:bg-muted/50"
         >
           <div className="h-2 w-2 rounded-full bg-success" />
-          <span className="hidden md:inline">Ethereum</span>
+          <span className="hidden md:inline">SUI</span>
           <ChevronDown size={14} className="text-muted-foreground" />
         </Button>
 
         <ThemeToggle />
 
-        <Button size="sm" className="gap-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Wallet size={16} />
-          <span className="hidden sm:inline">0x7a3f…b21e</span>
-        </Button>
+        <ConnectButton />
       </div>
     </motion.header>
   );

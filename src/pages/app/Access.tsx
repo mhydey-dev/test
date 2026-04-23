@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import AppHeader from "@/components/app/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Activity, DollarSign, TrendingUp, Ban } from "lucide-react";
+import { Activity, DollarSign, TrendingUp, Ban, Wallet } from "lucide-react";
 import {
   dataConsumers, earningsByMonth, permissions as initialPerms, TOTAL_EARNINGS,
 } from "@/lib/reputation-mock";
@@ -16,6 +16,8 @@ import {
 const Access = () => {
   const [perms, setPerms] = useState(initialPerms);
   const [consumers, setConsumers] = useState(dataConsumers);
+  const [claiming, setClaiming] = useState(false);
+  const [claimedUsdc, setClaimedUsdc] = useState(0);
 
   const toggle = (id: string) => {
     setPerms(perms.map((p) => (p.id === id ? { ...p, enabled: !p.enabled } : p)));
@@ -29,11 +31,36 @@ const Access = () => {
   const last30 = consumers.filter((c) => c.status === "active").length;
   const monthly = earningsByMonth[earningsByMonth.length - 1].earnings;
 
+  const claimableUsdc = Math.max(0, TOTAL_EARNINGS - claimedUsdc);
+  const suiPerUsdc = 0.62; // mock conversion rate
+  const claimableSui = useMemo(
+    () => claimableUsdc * suiPerUsdc,
+    [claimableUsdc],
+  );
+
+  const claim = async () => {
+    if (claiming) return;
+    if (claimableUsdc <= 0) {
+      toast("Nothing to claim");
+      return;
+    }
+    setClaiming(true);
+    try {
+      await new Promise((r) => setTimeout(r, 1000));
+      setClaimedUsdc((v) => v + claimableUsdc);
+      toast.success("Claim sent", {
+        description: `Claimed ${claimableSui.toFixed(2)} SUI`,
+      });
+    } finally {
+      setClaiming(false);
+    }
+  };
+
   return (
     <>
       <AppHeader title="Data Access" subtitle="Control what dApps see — and earn from every query" />
 
-      <div className="flex-1 px-4 md:px-8 py-6 space-y-6">
+      <div className="flex-1 px-4 md:px-8 pb-4 space-y-6">
         {/* Earnings stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="rounded-2xl border-border/60 p-5">
@@ -61,6 +88,46 @@ const Access = () => {
             <p className="text-xs text-muted-foreground mt-1">dApps with permission</p>
           </Card>
         </div>
+
+        {/* Claim */}
+        <Card className="rounded-2xl border-border/60 p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="font-display text-xl font-bold">Claim earnings</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Claim your data-access earnings in <span className="text-foreground font-medium">SUI</span>.
+              </p>
+            </div>
+            <Button onClick={claim} className="rounded-xl" disabled={claiming || claimableUsdc <= 0}>
+              <Wallet className="h-4 w-4 mr-1.5" />
+              {claiming ? "Claiming…" : "Claim in SUI"}
+            </Button>
+          </div>
+
+          <div className="mt-4 grid sm:grid-cols-3 gap-3">
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Claimable</p>
+              <p className="font-display text-2xl font-bold mt-1">{claimableSui.toFixed(2)} SUI</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                ≈ ${claimableUsdc.toFixed(2)} (mock rate)
+              </p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Already claimed</p>
+              <p className="font-display text-2xl font-bold mt-1">
+                {(claimedUsdc * suiPerUsdc).toFixed(2)} SUI
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">All-time</p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Settlement</p>
+              <p className="text-sm font-medium text-foreground mt-1">Instant (demo)</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Replace with on-chain claim logic
+              </p>
+            </div>
+          </div>
+        </Card>
 
         {/* Earnings chart */}
         <Card className="rounded-2xl border-border/60 p-6">

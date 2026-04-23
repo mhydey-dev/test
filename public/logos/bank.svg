@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Bank logo">
+  <rect width="120" height="120" rx="24" fill="#0B0B0F"/>
+  <path d="M60 26 22 44v8h76v-8L60 26Z" fill="#7C3AED"/>
+  <path d="M28 56h64v32H28V56Z" fill="#111827"/>
+  <path d="M36 56v32M52 56v32M68 56v32M84 56v32" stroke="#7C3AED" stroke-width="6" stroke-linecap="round"/>
+  <path d="M24 92h72" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+</svg>
+

@@ -60,7 +60,7 @@ const AppSidebar = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="font-display font-bold text-lg text-foreground"
               >
-                TrustLayer
+                Databook
               </motion.span>
             )}
           </AnimatePresence>

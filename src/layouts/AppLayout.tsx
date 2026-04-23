@@ -5,11 +5,12 @@ import { MobileBottomNav } from "@/components/app/MobileNav";
 const AppLayout = () => {
   return (
     <div className="flex min-h-screen w-full bg-background">
-      <div className="hidden md:block">
+      {/* Sticky sidebar — does not scroll with body */}
+      <div className="hidden md:block sticky top-0 h-screen shrink-0 self-start">
         <AppSidebar />
       </div>
 
-      <main className="flex-1 flex flex-col overflow-hidden pb-20 md:pb-0">
+      <main className="flex-1 flex flex-col min-w-0 pb-20 md:pb-0">
         <Outlet />
       </main>
 

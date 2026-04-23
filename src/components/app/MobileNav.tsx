@@ -49,7 +49,7 @@ export const MobileNav = () => {
                 <ShieldCheck className="h-4 w-4 text-primary" />
               </div>
               <span className="font-display font-bold text-lg text-foreground">
-                TrustLayer
+                Databook
               </span>
             </div>
 

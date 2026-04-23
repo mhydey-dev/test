@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "id": "conditional-swap",
+  "name": "Conditional Token Swap",
+  "description": "Swap tokens based on price conditions with success/failure notifications",
+  "category": "DeFi",
+  "nodes": [
+    {
+      "id": "settings",
+      "definitionId": "settings",
+      "type": "settings",
+      "title": "Settings",
+      "x": 80,
+      "y": 220
+    },
+    {
+      "id": "node-1",
+      "definitionId": "coinmarketcap",
+      "type": "node",
+      "title": "CoinMarketCap",
+      "x": 350,
+      "y": 220,
+      "config": {
+        "symbol": "ETH",
+        "condition": "below",
+        "price": "2000",
+        "interval": "5m"
+      }
+    },
+    {
+      "id": "node-2",
+      "definitionId": "if-else",
+      "type": "node",
+      "title": "If/Else",
+      "x": 620,
+      "y": 220,
+      "config": {
+        "condition": "price < targetPrice"
+      }
+    },
+    {
+      "id": "node-3",
+      "definitionId": "pancakeswap",
+      "type": "node",
+      "title": "PancakeSwap",
+      "x": 890,
+      "y": 140,
+      "config": {
+        "tokenIn": "USDT",
+        "tokenOut": "ETH",
+        "slippage": "1"
+      }
+    },
+    {
+      "id": "node-4",
+      "definitionId": "telegram",
+      "type": "node",
+      "title": "Telegram",
+      "x": 890,
+      "y": 300,
+      "config": {
+        "message": "⏸️ Price condition not met, waiting..."
+      }
+    }
+  ],
+  "connections": [
+    { "id": "conn-1", "fromNode": "settings", "fromPort": 0, "toNode": "node-1", "toPort": 0 },
+    { "id": "conn-2", "fromNode": "node-1", "fromPort": 0, "toNode": "node-2", "toPort": 0 },
+    { "id": "conn-3", "fromNode": "node-2", "fromPort": 0, "toNode": "node-3", "toPort": 0 },
+    { "id": "conn-4", "fromNode": "node-2", "fromPort": 1, "toNode": "node-4", "toPort": 0 }
+  ]
+}

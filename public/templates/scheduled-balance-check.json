@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "id": "scheduled-balance-check",
+  "name": "Scheduled Balance Check",
+  "description": "Check wallet balance on a schedule and notify if low",
+  "category": "Automation",
+  "nodes": [
+    {
+      "id": "settings",
+      "definitionId": "settings",
+      "type": "settings",
+      "title": "Settings",
+      "x": 80,
+      "y": 180
+    },
+    {
+      "id": "node-1",
+      "definitionId": "schedule-trigger",
+      "type": "node",
+      "title": "Schedule",
+      "x": 350,
+      "y": 180,
+      "config": {
+        "interval": "1h",
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "node-2",
+      "definitionId": "read-contract",
+      "type": "node",
+      "title": "Read Contract",
+      "x": 620,
+      "y": 180,
+      "config": {
+        "function": "balanceOf"
+      }
+    },
+    {
+      "id": "node-3",
+      "definitionId": "if-else",
+      "type": "node",
+      "title": "If/Else",
+      "x": 890,
+      "y": 180,
+      "config": {
+        "condition": "balance < 0.1"
+      }
+    },
+    {
+      "id": "node-4",
+      "definitionId": "telegram",
+      "type": "node",
+      "title": "Telegram",
+      "x": 1160,
+      "y": 100,
+      "config": {
+        "message": "⚠️ Low balance alert! Please top up your wallet."
+      }
+    }
+  ],
+  "connections": [
+    { "id": "conn-1", "fromNode": "settings", "fromPort": 0, "toNode": "node-1", "toPort": 0 },
+    { "id": "conn-2", "fromNode": "node-1", "fromPort": 0, "toNode": "node-2", "toPort": 0 },
+    { "id": "conn-3", "fromNode": "node-2", "fromPort": 0, "toNode": "node-3", "toPort": 0 },
+    { "id": "conn-4", "fromNode": "node-3", "fromPort": 0, "toNode": "node-4", "toPort": 0 }
+  ]
+}

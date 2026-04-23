@@ -1,0 +1,90 @@
+{
+  "version": "1.0",
+  "id": "arbitrage-detector",
+  "name": "Arbitrage Detector",
+  "description": "Detect price differences and execute arbitrage trades",
+  "category": "DeFi",
+  "nodes": [
+    {
+      "id": "settings",
+      "definitionId": "settings",
+      "type": "settings",
+      "title": "Settings",
+      "x": 80,
+      "y": 200
+    },
+    {
+      "id": "node-1",
+      "definitionId": "read-contract",
+      "type": "node",
+      "title": "Read Contract",
+      "x": 350,
+      "y": 120,
+      "config": {
+        "address": "0x...",
+        "function": "getReserves"
+      }
+    },
+    {
+      "id": "node-2",
+      "definitionId": "coinmarketcap",
+      "type": "node",
+      "title": "CoinMarketCap",
+      "x": 350,
+      "y": 280,
+      "config": {
+        "symbol": "CAKE",
+        "interval": "1m"
+      }
+    },
+    {
+      "id": "node-3",
+      "definitionId": "openai",
+      "type": "node",
+      "title": "OpenAI",
+      "x": 620,
+      "y": 200,
+      "config": {
+        "prompt": "Compare DEX price vs CEX price and calculate arbitrage opportunity"
+      }
+    },
+    {
+      "id": "node-4",
+      "definitionId": "if-else",
+      "type": "node",
+      "title": "If/Else",
+      "x": 890,
+      "y": 200,
+      "config": {
+        "condition": "profitPercentage > 0.5"
+      }
+    },
+    {
+      "id": "node-5",
+      "definitionId": "pancakeswap",
+      "type": "node",
+      "title": "PancakeSwap",
+      "x": 1160,
+      "y": 120,
+      "config": {}
+    },
+    {
+      "id": "node-6",
+      "definitionId": "telegram",
+      "type": "node",
+      "title": "Telegram",
+      "x": 1160,
+      "y": 280,
+      "config": {
+        "message": "No profitable arbitrage found"
+      }
+    }
+  ],
+  "connections": [
+    { "id": "conn-1", "fromNode": "settings", "fromPort": 0, "toNode": "node-1", "toPort": 0 },
+    { "id": "conn-2", "fromNode": "node-1", "fromPort": 0, "toNode": "node-3", "toPort": 0 },
+    { "id": "conn-3", "fromNode": "node-3", "fromPort": 0, "toNode": "node-4", "toPort": 0 },
+    { "id": "conn-4", "fromNode": "node-4", "fromPort": 0, "toNode": "node-5", "toPort": 0 },
+    { "id": "conn-5", "fromNode": "node-4", "fromPort": 1, "toNode": "node-6", "toPort": 0 }
+  ]
+}

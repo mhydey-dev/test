@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "id": "dca-strategy",
+  "name": "DCA Bot",
+  "description": "Dollar-cost averaging strategy with automatic swaps",
+  "category": "DeFi",
+  "nodes": [
+    {
+      "id": "settings",
+      "definitionId": "settings",
+      "type": "settings",
+      "title": "Settings",
+      "x": 80,
+      "y": 180
+    },
+    {
+      "id": "node-1",
+      "definitionId": "schedule-trigger",
+      "type": "node",
+      "title": "Schedule",
+      "x": 350,
+      "y": 180,
+      "config": {
+        "interval": "24h",
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "node-2",
+      "definitionId": "pancakeswap",
+      "type": "node",
+      "title": "PancakeSwap",
+      "x": 620,
+      "y": 180,
+      "config": {
+        "tokenIn": "USDT",
+        "tokenOut": "BTC",
+        "amount": "100",
+        "slippage": "0.5"
+      }
+    },
+    {
+      "id": "node-3",
+      "definitionId": "telegram",
+      "type": "node",
+      "title": "Telegram",
+      "x": 890,
+      "y": 180,
+      "config": {
+        "message": "✅ DCA purchase completed: $100 worth of BTC"
+      }
+    }
+  ],
+  "connections": [
+    { "id": "conn-1", "fromNode": "settings", "fromPort": 0, "toNode": "node-1", "toPort": 0 },
+    { "id": "conn-2", "fromNode": "node-1", "fromPort": 0, "toNode": "node-2", "toPort": 0 },
+    { "id": "conn-3", "fromNode": "node-2", "fromPort": 0, "toNode": "node-3", "toPort": 0 }
+  ]
+}

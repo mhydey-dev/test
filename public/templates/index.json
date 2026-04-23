@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "id": "price-alert-telegram",
+      "name": "Price Alert to Telegram",
+      "description": "Get notified on Telegram when a token reaches your target price",
+      "category": "Notifications",
+      "file": "price-alert-telegram.json"
+    },
+    {
+      "id": "conditional-swap",
+      "name": "Conditional Token Swap",
+      "description": "Swap tokens based on price conditions with success/failure notifications",
+      "category": "DeFi",
+      "file": "conditional-swap.json"
+    },
+    {
+      "id": "ai-analysis-trade",
+      "name": "AI-Powered Trading",
+      "description": "Use AI to analyze market conditions before executing trades",
+      "category": "AI",
+      "file": "ai-analysis-trade.json"
+    },
+    {
+      "id": "contract-monitor",
+      "name": "Smart Contract Monitor",
+      "description": "Monitor contract state and notify on changes",
+      "category": "Contracts",
+      "file": "contract-monitor.json"
+    },
+    {
+      "id": "dca-strategy",
+      "name": "DCA Bot",
+      "description": "Dollar-cost averaging strategy with automatic swaps",
+      "category": "DeFi",
+      "file": "dca-strategy.json"
+    },
+    {
+      "id": "arbitrage-detector",
+      "name": "Arbitrage Detector",
+      "description": "Detect price differences and execute arbitrage trades",
+      "category": "DeFi",
+      "file": "arbitrage-detector.json"
+    },
+    {
+      "id": "scheduled-balance-check",
+      "name": "Scheduled Balance Check",
+      "description": "Check wallet balance on a schedule and notify if low",
+      "category": "Automation",
+      "file": "scheduled-balance-check.json"
+    }
+  ]
+}

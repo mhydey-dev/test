@@ -6,12 +6,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import NotFound from "./pages/NotFound";
 import AppLayout from "./layouts/AppLayout";
-import Dashboard from "./pages/app/Dashboard";
-import Templates from "./pages/app/Templates";
-import Workflows from "./pages/app/Workflows";
-import Wallets from "./pages/app/Wallets";
+import Overview from "./pages/app/Overview";
+import Score from "./pages/app/Score";
+import Proofs from "./pages/app/Proofs";
+import Access from "./pages/app/Access";
+import Ask from "./pages/app/Ask";
+import Developers from "./pages/app/Developers";
 import Settings from "./pages/app/Settings";
-import Builder from "./pages/app/Builder";
 
 const queryClient = new QueryClient();
 
@@ -23,30 +24,15 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* App is now the root */}
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="create" element={<Templates />} />
-              <Route path="templates" element={<Templates />} />
-              <Route path="workflows" element={<Workflows />} />
-              <Route path="wallets" element={<Wallets />} />
+              <Route index element={<Overview />} />
+              <Route path="score" element={<Score />} />
+              <Route path="proofs" element={<Proofs />} />
+              <Route path="access" element={<Access />} />
+              <Route path="ask" element={<Ask />} />
+              <Route path="developers" element={<Developers />} />
               <Route path="settings" element={<Settings />} />
             </Route>
-
-            {/* Legacy /app routes still supported */}
-            <Route path="/app" element={<AppLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="create" element={<Templates />} />
-              <Route path="templates" element={<Templates />} />
-              <Route path="workflows" element={<Workflows />} />
-              <Route path="wallets" element={<Wallets />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-
-            <Route path="/builder" element={<Builder />} />
-            <Route path="/app/builder" element={<Builder />} />
-
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

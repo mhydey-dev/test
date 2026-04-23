@@ -42,7 +42,7 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
           size="sm"
           className="hidden sm:flex gap-2 rounded-xl border-border/60 hover:border-border hover:bg-muted/50"
         >
-          <div className="h-2 w-2 rounded-full bg-emerald-500" />
+          <div className="h-2 w-2 rounded-full bg-success" />
           <span className="hidden md:inline">Ethereum</span>
           <ChevronDown size={14} className="text-muted-foreground" />
         </Button>

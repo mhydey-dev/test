@@ -158,6 +158,101 @@ export const issuedProofs: IssuedProof[] = [
   { id: "ip3", template: "Wallet Age",            predicate: "walletAge > 24mo",  issuedAt: "3 days ago",  expiresIn: "in 27 days", consumer: "ENS" },
 ];
 
+// Build a richer issued proofs dataset (40 entries) for list/search/filter/pagination.
+const PROOF_TEMPLATES: { id: string; title: string; predicate: string; category: IssuedProof["category"] }[] = [
+  { id: "z1", title: "Score Above Threshold", predicate: "score > 700",            category: "Credit" },
+  { id: "z2", title: "Never Liquidated",      predicate: "liquidations(12mo) == 0",category: "Risk" },
+  { id: "z3", title: "Wallet Age",            predicate: "walletAge > 24mo",       category: "Identity" },
+  { id: "z4", title: "Active Governance",     predicate: "daoVotes >= 10",         category: "Activity" },
+  { id: "z5", title: "Repayment Streak",      predicate: "onTimeRepayments >= 5",  category: "Credit" },
+  { id: "z6", title: "Unique Human",          predicate: "sybilScore < 0.1",       category: "Identity" },
+];
+
+const CONSUMER_POOL: { app: string; category: string }[] = [
+  { app: "Aave V3",         category: "Lending" },
+  { app: "Compound",        category: "Lending" },
+  { app: "Snapshot",        category: "Governance" },
+  { app: "OpenSea Pro",     category: "NFT" },
+  { app: "Lens Protocol",   category: "Social" },
+  { app: "GMX",             category: "Perps" },
+  { app: "ENS Marketplace", category: "Identity" },
+  { app: "Maker DAO",       category: "Lending" },
+  { app: "Uniswap",         category: "DEX" },
+  { app: "dYdX",            category: "Perps" },
+  { app: "Tally",           category: "Governance" },
+  { app: "Friend.tech",     category: "Social" },
+];
+
+const ZK_SYSTEMS: IssuedProof["zkSystem"][] = ["Groth16", "PLONK", "Halo2"];
+
+function makeProofId(seed: number): string {
+  const hex = (seed * 9301 + 49297) % 233280;
+  const slug = hex.toString(16).padStart(6, "0");
+  return `zkp_${slug}${(seed * 7).toString(16).padStart(2, "0")}`;
+}
+
+function makeProofHash(seed: number): string {
+  let h = "0x";
+  for (let i = 0; i < 32; i++) {
+    h += (((seed + i) * 2654435761) % 16).toString(16);
+  }
+  return h;
+}
+
+function relativeTime(daysAgo: number): string {
+  if (daysAgo < 1) return "Today";
+  if (daysAgo === 1) return "Yesterday";
+  if (daysAgo < 7) return `${daysAgo} days ago`;
+  if (daysAgo < 14) return "1 week ago";
+  if (daysAgo < 30) return `${Math.floor(daysAgo / 7)} weeks ago`;
+  if (daysAgo < 60) return "1 month ago";
+  return `${Math.floor(daysAgo / 30)} months ago`;
+}
+
+function buildIssuedProofs(): IssuedProof[] {
+  const now = Date.now();
+  const dayMs = 86_400_000;
+  const proofs: IssuedProof[] = [];
+
+  for (let i = 0; i < 40; i++) {
+    const tpl = PROOF_TEMPLATES[i % PROOF_TEMPLATES.length];
+    const issuedDaysAgo = Math.floor((i * 3 + (i % 4)) * 1.1) + 1;
+    const lifetime = 30; // most proofs have 30d lifetime
+    const expiresInDays = lifetime - issuedDaysAgo;
+
+    let status: ProofStatus;
+    if (i % 13 === 0) status = "revoked";
+    else if (expiresInDays < 0) status = "expired";
+    else if (i % 17 === 0) status = "pending";
+    else status = "active";
+
+    const consumer = i % 5 === 0 ? undefined : CONSUMER_POOL[i % CONSUMER_POOL.length];
+    const issuedAtMs = now - issuedDaysAgo * dayMs;
+
+    proofs.push({
+      id: `ip${(i + 1).toString().padStart(3, "0")}`,
+      templateId: tpl.id,
+      template: tpl.title,
+      predicate: tpl.predicate,
+      category: tpl.category,
+      issuedAt: relativeTime(issuedDaysAgo),
+      issuedAtMs,
+      expiresAt: expiresInDays >= 0 ? `in ${expiresInDays} days` : `${Math.abs(expiresInDays)} days ago`,
+      expiresInDays,
+      consumer: consumer?.app,
+      consumerCategory: consumer?.category,
+      status,
+      proofHash: makeProofHash(i + 1),
+      verifications: status === "active" ? (i * 7) % 48 : status === "expired" ? (i * 3) % 12 : 0,
+      size: `${(1.8 + ((i * 0.13) % 1.4)).toFixed(1)} KB`,
+      zkSystem: ZK_SYSTEMS[i % ZK_SYSTEMS.length],
+    });
+  }
+  return proofs;
+}
+
+export const issuedProofs: IssuedProof[] = buildIssuedProofs();
+
 // ----- Ask Your Data canned answers -----
 
 export interface AiInsight {

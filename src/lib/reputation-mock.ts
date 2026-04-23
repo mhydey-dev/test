@@ -152,12 +152,6 @@ export const zkTemplates: ZkProofTemplate[] = [
   { id: "z6", title: "Unique Human",          description: "Prove this wallet is sybil-resistant via clustering.",        predicate: "sybilScore < 0.1", category: "Identity" },
 ];
 
-export const issuedProofs: IssuedProof[] = [
-  { id: "ip1", template: "Score Above Threshold", predicate: "score > 700",       issuedAt: "2 hours ago", expiresIn: "in 30 days", consumer: "Aave V3" },
-  { id: "ip2", template: "Never Liquidated",      predicate: "liquidations == 0", issuedAt: "Yesterday",   expiresIn: "in 6 days",  consumer: "Compound" },
-  { id: "ip3", template: "Wallet Age",            predicate: "walletAge > 24mo",  issuedAt: "3 days ago",  expiresIn: "in 27 days", consumer: "ENS" },
-];
-
 // Build a richer issued proofs dataset (40 entries) for list/search/filter/pagination.
 const PROOF_TEMPLATES: { id: string; title: string; predicate: string; category: IssuedProof["category"] }[] = [
   { id: "z1", title: "Score Above Threshold", predicate: "score > 700",            category: "Credit" },

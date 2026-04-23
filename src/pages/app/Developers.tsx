@@ -7,9 +7,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Code2, Copy, Key, Webhook, BookOpen } from "lucide-react";
 
-const SDK_SNIPPET = `import { TrustLayer } from "@trustlayer/sdk";
+const SDK_SNIPPET = `import { Databook } from "@databook/sdk";
 
-const sdk = new TrustLayer({ apiKey: process.env.TRUSTLAYER_API_KEY });
+const sdk = new Databook({ apiKey: process.env.DATABOOK_API_KEY });
 
 // Fetch a wallet's reputation score
 const score = await sdk.getReputationScore("0x7a3f...b21e");
@@ -28,8 +28,8 @@ await sdk.grantAccess({
 });`;
 
 const REST_SNIPPET = `# Fetch reputation score
-curl https://api.trustlayer.xyz/v1/score/0x7a3f...b21e \\
-  -H "Authorization: Bearer $TRUSTLAYER_API_KEY"
+curl https://api.databook.xyz/v1/score/0x7a3f...b21e \\
+  -H "Authorization: Bearer $DATABOOK_API_KEY"
 
 # Response
 {
@@ -42,8 +42,8 @@ curl https://api.trustlayer.xyz/v1/score/0x7a3f...b21e \\
 }`;
 
 const VERIFY_SNIPPET = `# Verify a ZK proof
-curl https://api.trustlayer.xyz/v1/proofs/verify \\
-  -H "Authorization: Bearer $TRUSTLAYER_API_KEY" \\
+curl https://api.databook.xyz/v1/proofs/verify \\
+  -H "Authorization: Bearer $DATABOOK_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "proof": "zkp_8f3a4c2b...",

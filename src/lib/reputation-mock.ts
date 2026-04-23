@@ -51,13 +51,25 @@ export interface ZkProofTemplate {
   category: "Credit" | "Risk" | "Identity" | "Activity";
 }
 
+export type ProofStatus = "active" | "expired" | "revoked" | "pending";
+
 export interface IssuedProof {
   id: string;
+  templateId: string;
   template: string;
   predicate: string;
-  issuedAt: string;
-  expiresIn: string;
+  category: "Credit" | "Risk" | "Identity" | "Activity";
+  issuedAt: string;          // human readable
+  issuedAtMs: number;        // for sorting
+  expiresAt: string;         // human readable
+  expiresInDays: number;     // negative if expired
   consumer?: string;
+  consumerCategory?: string;
+  status: ProofStatus;
+  proofHash: string;
+  verifications: number;
+  size: string;              // e.g. "2.4 KB"
+  zkSystem: "Groth16" | "PLONK" | "Halo2";
 }
 
 export const MAIN_SCORE = 782;

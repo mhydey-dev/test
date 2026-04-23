@@ -18,7 +18,7 @@ const Score = () => {
     <>
       <AppHeader title="Trust Score" subtitle="Full breakdown of your on-chain reputation" />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8 space-y-6">
+      <div className="flex-1 px-4 md:px-8 py-6 space-y-6">
         <div className="grid md:grid-cols-3 gap-4">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="rounded-2xl border-border/60 p-6 h-full">

@@ -9,6 +9,7 @@ import AppLayout from "./layouts/AppLayout";
 import Overview from "./pages/app/Overview";
 import Score from "./pages/app/Score";
 import Proofs from "./pages/app/Proofs";
+import ProofDetail from "./pages/app/ProofDetail";
 import Access from "./pages/app/Access";
 import Ask from "./pages/app/Ask";
 import Developers from "./pages/app/Developers";
@@ -28,6 +29,7 @@ const App = () => (
               <Route index element={<Overview />} />
               <Route path="score" element={<Score />} />
               <Route path="proofs" element={<Proofs />} />
+              <Route path="proofs/:id" element={<ProofDetail />} />
               <Route path="access" element={<Access />} />
               <Route path="ask" element={<Ask />} />
               <Route path="developers" element={<Developers />} />

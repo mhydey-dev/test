@@ -12,7 +12,7 @@ const Settings = () => {
     <>
       <AppHeader title="Settings" subtitle="Identity sources, privacy, and notifications" />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8 space-y-6 max-w-3xl">
+      <div className="flex-1 px-4 md:px-8 py-6 space-y-6 max-w-3xl">
         <Card className="rounded-2xl border-border/60 p-6">
           <h2 className="font-display text-xl font-bold mb-4">Connected wallet</h2>
           <div className="flex items-center justify-between p-4 rounded-xl border border-border/40">

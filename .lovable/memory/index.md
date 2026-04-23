@@ -4,13 +4,12 @@ Updated: just now
 # Project Memory
 
 ## Core
-TrustLayer: AI On-Chain Identity & Reputation Scoring. Mock-only (no real Web3, no backend).
-Routes: / (Overview), /score, /proofs, /access, /ask, /developers, /settings.
-Inter Tight headers, Inter body. Tailwind `primary` is Sui blue. Use semantic tokens (success/warning/info/destructive) — never hardcoded colors.
-Professional design: no gradients on buttons, no glass-morphism. Light/Dark mode via CSS vars.
-Mobile fully responsive.
+Databook — AI On-Chain Identity & Reputation. Web3/wallet interactions are mock UI only.
+Inter Tight headers, Inter body. Use `primary` (Sui blue HSL token) — no hardcoded colors.
+Professional design: subtle borders, no heavy shadows, no gradients on buttons.
+Light/Dark mode via CSS HSL variables. Mobile fully responsive.
+Sidebar is sticky (md+) — does not scroll with body. Page headers also sticky with backdrop blur.
+ZK Proofs page = list with search + status/category filters + pagination. Detail page at /proofs/:id with generate / renew / revoke / share actions. New proof flow at /proofs/new.
 
 ## Memories
-- [TrustLayer Identity](mem://project/identity) — Core product identity and section list
-- [Design System](mem://style/design-system) — Visual styling, typography, and theme constraints
-- [Layout & Navigation](mem://features/layout-navigation) — App structure, sidebars, and responsive navigation rules
+(legacy workflow-builder memories from previous product are obsolete and can be ignored)

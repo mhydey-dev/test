@@ -22,7 +22,7 @@ const Overview = () => {
     <>
       <AppHeader title="Overview" subtitle="Your AI on-chain identity at a glance" />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8">
+      <div className="flex-1 px-4 md:px-8 py-6 space-y-6">
         {/* Hero score card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -70,7 +70,7 @@ const Overview = () => {
                     <Link to="/score">View full breakdown <ArrowUpRight className="h-4 w-4 ml-1" /></Link>
                   </Button>
                   <Button asChild variant="outline" className="rounded-xl">
-                    <Link to="/proofs">Generate ZK proof</Link>
+                    <Link to="/proofs/new">Generate ZK proof</Link>
                   </Button>
                 </div>
               </div>
@@ -104,7 +104,7 @@ const Overview = () => {
         </motion.div>
 
         {/* Stat grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Total Earnings", value: `$${TOTAL_EARNINGS.toFixed(2)}`, icon: DollarSign, sub: "from data queries" },
             { label: "Active Consumers", value: dataConsumers.filter(c => c.status === "active").length, icon: Activity, sub: "dApps querying you" },
@@ -130,7 +130,7 @@ const Overview = () => {
         </div>
 
         {/* Recent activity + quick actions */}
-        <div className="grid md:grid-cols-3 gap-4 mt-6">
+        <div className="grid md:grid-cols-3 gap-4">
           <Card className="md:col-span-2 rounded-2xl border-border/60 p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -163,7 +163,7 @@ const Overview = () => {
             <h2 className="font-display text-lg font-bold mb-4">Quick actions</h2>
             <div className="space-y-2">
               {[
-                { to: "/proofs",     icon: Lock,      label: "Generate ZK proof", desc: "Selective disclosure" },
+                { to: "/proofs/new", icon: Lock,      label: "Generate ZK proof", desc: "Selective disclosure" },
                 { to: "/ask",        icon: Sparkles,  label: "Ask your data",     desc: "AI-powered insights" },
                 { to: "/access",     icon: Activity,  label: "Manage permissions",desc: "Control field access" },
                 { to: "/developers", icon: Shield,    label: "API & SDK",         desc: "For dApp builders" },

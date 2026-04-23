@@ -1,30 +1,31 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  Plus, 
-  LayoutTemplate, 
-  Wallet, 
-  Zap, 
-  BookOpen,
+import {
+  LayoutDashboard,
+  Shield,
+  Lock,
+  Activity,
+  Sparkles,
+  Code2,
   Settings,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { title: "Dashboard", url: "/app", icon: LayoutDashboard },
-  { title: "Create", url: "/app/builder", icon: Plus },
-  { title: "Templates", url: "/app/templates", icon: LayoutTemplate },
-  { title: "Wallets", url: "/app/wallets", icon: Wallet },
-  { title: "Workflows", url: "/app/workflows", icon: Zap },
+  { title: "Overview",      url: "/",            icon: LayoutDashboard },
+  { title: "Trust Score",   url: "/score",       icon: Shield },
+  { title: "ZK Proofs",     url: "/proofs",      icon: Lock },
+  { title: "Data Access",   url: "/access",      icon: Activity },
+  { title: "Ask Your Data", url: "/ask",         icon: Sparkles },
+  { title: "Developers",    url: "/developers",  icon: Code2 },
 ];
 
 const bottomItems = [
-  { title: "Settings", url: "/app/settings", icon: Settings },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 const AppSidebar = () => {
@@ -32,7 +33,7 @@ const AppSidebar = () => {
   const location = useLocation();
 
   const isActive = (path: string) => {
-    if (path === "/app") return location.pathname === "/app";
+    if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
 
@@ -46,11 +47,10 @@ const AppSidebar = () => {
         collapsed ? "w-[72px]" : "w-60"
       )}
     >
-      {/* Logo */}
       <div className="flex items-center justify-between p-4 border-b border-border/40">
         <Link to="/" className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-xl bg-primary/15 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-primary" />
+            <ShieldCheck className="h-4 w-4 text-primary" />
           </div>
           <AnimatePresence>
             {!collapsed && (
@@ -60,14 +60,13 @@ const AppSidebar = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="font-display font-bold text-lg text-foreground"
               >
-                FlowFi
+                TrustLayer
               </motion.span>
             )}
           </AnimatePresence>
         </Link>
       </div>
 
-      {/* Nav Items */}
       <nav className="flex-1 p-2 space-y-1">
         {navItems.map((item) => (
           <Link
@@ -80,8 +79,8 @@ const AppSidebar = () => {
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
             )}
           >
-            <item.icon 
-              size={18} 
+            <item.icon
+              size={18}
               className={cn(
                 "transition-colors shrink-0",
                 isActive(item.url) ? "text-foreground" : "group-hover:text-foreground"
@@ -103,7 +102,6 @@ const AppSidebar = () => {
         ))}
       </nav>
 
-      {/* Bottom Section */}
       <div className="p-2 space-y-1 border-t border-border/40">
         {bottomItems.map((item) => (
           <Link
@@ -116,13 +114,7 @@ const AppSidebar = () => {
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
             )}
           >
-            <item.icon 
-              size={18} 
-              className={cn(
-                "transition-colors shrink-0",
-                isActive(item.url) ? "text-foreground" : "group-hover:text-foreground"
-              )}
-            />
+            <item.icon size={18} className="shrink-0" />
             <AnimatePresence>
               {!collapsed && (
                 <motion.span
@@ -138,16 +130,11 @@ const AppSidebar = () => {
           </Link>
         ))}
 
-        {/* Collapse Toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all duration-200"
         >
-          {collapsed ? (
-            <ChevronRight size={18} className="shrink-0" />
-          ) : (
-            <ChevronLeft size={18} className="shrink-0" />
-          )}
+          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
           <AnimatePresence>
             {!collapsed && (
               <motion.span

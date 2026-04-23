@@ -1,0 +1,180 @@
+// Mock data for TrustLayer — AI On-Chain Identity & Reputation
+
+export type TrustTier = "Excellent" | "Good" | "Fair" | "Building";
+
+export interface ScoreBreakdownItem {
+  category: string;
+  weight: number; // out of 100
+  value: number;  // 0-1000 contribution scaled
+  color: string;  // semantic token reference
+}
+
+export interface ScorePoint {
+  date: string;     // ISO short
+  score: number;
+  event?: string;   // optional annotation
+}
+
+export interface BehavioralTag {
+  label: string;
+  tone: "positive" | "neutral" | "warning";
+}
+
+export interface DataConsumer {
+  id: string;
+  app: string;
+  category: string;
+  fields: string[];
+  accessedAt: string;       // relative
+  paid: number;             // USDC
+  status: "active" | "revoked";
+}
+
+export interface EarningsPoint {
+  month: string;
+  earnings: number;
+}
+
+export interface PermissionRow {
+  id: string;
+  field: string;
+  description: string;
+  enabled: boolean;
+  pricePerQuery: number;
+}
+
+export interface ZkProofTemplate {
+  id: string;
+  title: string;
+  description: string;
+  predicate: string;
+  category: "Credit" | "Risk" | "Identity" | "Activity";
+}
+
+export interface IssuedProof {
+  id: string;
+  template: string;
+  predicate: string;
+  issuedAt: string;
+  expiresIn: string;
+  consumer?: string;
+}
+
+export const MAIN_SCORE = 782;
+export const SCORE_TIER: TrustTier = "Excellent";
+export const SCORE_DELTA_30D = +24;
+export const PERCENTILE = 92;
+
+export const scoreHistory: ScorePoint[] = [
+  { date: "Jan", score: 612 },
+  { date: "Feb", score: 638 },
+  { date: "Mar", score: 651, event: "Repaid Aave loan" },
+  { date: "Apr", score: 670 },
+  { date: "May", score: 645, event: "Liquidation event" },
+  { date: "Jun", score: 689 },
+  { date: "Jul", score: 712, event: "DAO vote streak" },
+  { date: "Aug", score: 728 },
+  { date: "Sep", score: 741 },
+  { date: "Oct", score: 758, event: "1y wallet age" },
+  { date: "Nov", score: 770 },
+  { date: "Dec", score: 782 },
+];
+
+export const scoreBreakdown: ScoreBreakdownItem[] = [
+  { category: "DeFi Behavior",     weight: 35, value: 285, color: "hsl(var(--primary))" },
+  { category: "Wallet History",    weight: 20, value: 168, color: "hsl(var(--info))" },
+  { category: "DAO Participation", weight: 15, value: 124, color: "hsl(var(--success))" },
+  { category: "NFT Activity",      weight: 12, value: 92,  color: "hsl(var(--warning))" },
+  { category: "Social Signals",    weight: 10, value: 78,  color: "hsl(var(--accent-foreground))" },
+  { category: "KYC / Attestations",weight:  8, value: 35,  color: "hsl(var(--muted-foreground))" },
+];
+
+export const behavioralTags: BehavioralTag[] = [
+  { label: "Consistent Repayer",      tone: "positive" },
+  { label: "Long-term Holder",        tone: "positive" },
+  { label: "Active Governance Voter", tone: "positive" },
+  { label: "Diversified Portfolio",   tone: "positive" },
+  { label: "Moderate Risk Profile",   tone: "neutral"  },
+  { label: "1 Liquidation (May)",     tone: "warning"  },
+];
+
+export const dataConsumers: DataConsumer[] = [
+  { id: "c1", app: "Aave V3",         category: "Lending",     fields: ["score", "riskProfile"],            accessedAt: "2 hours ago",  paid: 0.45, status: "active" },
+  { id: "c2", app: "Compound",        category: "Lending",     fields: ["score", "liquidationHistory"],     accessedAt: "8 hours ago",  paid: 0.38, status: "active" },
+  { id: "c3", app: "Snapshot",        category: "Governance",  fields: ["daoParticipation"],                accessedAt: "Yesterday",    paid: 0.12, status: "active" },
+  { id: "c4", app: "OpenSea Pro",     category: "NFT",         fields: ["nftActivity", "walletAge"],        accessedAt: "2 days ago",   paid: 0.22, status: "active" },
+  { id: "c5", app: "Lens Protocol",   category: "Social",      fields: ["socialSignals"],                   accessedAt: "3 days ago",   paid: 0.08, status: "active" },
+  { id: "c6", app: "GMX",             category: "Perps",       fields: ["score", "riskProfile"],            accessedAt: "5 days ago",   paid: 0.55, status: "active" },
+  { id: "c7", app: "ENS Marketplace", category: "Identity",    fields: ["walletAge"],                       accessedAt: "1 week ago",   paid: 0.05, status: "revoked" },
+  { id: "c8", app: "Maker DAO",       category: "Lending",     fields: ["score", "repaymentHistory"],       accessedAt: "1 week ago",   paid: 0.42, status: "active" },
+];
+
+export const earningsByMonth: EarningsPoint[] = [
+  { month: "Jul", earnings: 12.4 },
+  { month: "Aug", earnings: 18.9 },
+  { month: "Sep", earnings: 22.1 },
+  { month: "Oct", earnings: 28.7 },
+  { month: "Nov", earnings: 34.2 },
+  { month: "Dec", earnings: 41.8 },
+];
+
+export const TOTAL_EARNINGS = earningsByMonth.reduce((a, p) => a + p.earnings, 0);
+
+export const permissions: PermissionRow[] = [
+  { id: "p1", field: "Trust Score",        description: "Your aggregate 0–1000 reputation score", enabled: true,  pricePerQuery: 0.10 },
+  { id: "p2", field: "Risk Profile",       description: "Low / medium / high risk classification",enabled: true,  pricePerQuery: 0.15 },
+  { id: "p3", field: "Repayment History",  description: "Loan repayment timeliness signals",      enabled: true,  pricePerQuery: 0.20 },
+  { id: "p4", field: "Liquidation History",description: "Number and recency of liquidations",     enabled: true,  pricePerQuery: 0.15 },
+  { id: "p5", field: "DAO Participation",  description: "Voting frequency and proposal authoring",enabled: true,  pricePerQuery: 0.05 },
+  { id: "p6", field: "NFT Activity",       description: "Holdings and trading behavior",          enabled: false, pricePerQuery: 0.08 },
+  { id: "p7", field: "Social Signals",     description: "Linked GitHub / Twitter reputation",     enabled: false, pricePerQuery: 0.06 },
+  { id: "p8", field: "KYC Attestations",   description: "Verified identity attestations (no PII)",enabled: false, pricePerQuery: 0.30 },
+];
+
+export const zkTemplates: ZkProofTemplate[] = [
+  { id: "z1", title: "Score Above Threshold", description: "Prove your trust score exceeds a value without revealing it.", predicate: "score > 700", category: "Credit" },
+  { id: "z2", title: "Never Liquidated",      description: "Prove you have zero liquidations in the past 12 months.",     predicate: "liquidations(12mo) == 0", category: "Risk" },
+  { id: "z3", title: "Wallet Age",            description: "Prove your wallet is older than N months.",                   predicate: "walletAge > 24mo", category: "Identity" },
+  { id: "z4", title: "Active Governance",     description: "Prove you've voted in at least N DAO proposals.",             predicate: "daoVotes >= 10", category: "Activity" },
+  { id: "z5", title: "Repayment Streak",      description: "Prove a clean repayment record over a window.",               predicate: "onTimeRepayments >= 5", category: "Credit" },
+  { id: "z6", title: "Unique Human",          description: "Prove this wallet is sybil-resistant via clustering.",        predicate: "sybilScore < 0.1", category: "Identity" },
+];
+
+export const issuedProofs: IssuedProof[] = [
+  { id: "ip1", template: "Score Above Threshold", predicate: "score > 700",       issuedAt: "2 hours ago", expiresIn: "in 30 days", consumer: "Aave V3" },
+  { id: "ip2", template: "Never Liquidated",      predicate: "liquidations == 0", issuedAt: "Yesterday",   expiresIn: "in 6 days",  consumer: "Compound" },
+  { id: "ip3", template: "Wallet Age",            predicate: "walletAge > 24mo",  issuedAt: "3 days ago",  expiresIn: "in 27 days", consumer: "ENS" },
+];
+
+// ----- Ask Your Data canned answers -----
+
+export interface AiInsight {
+  question: string;
+  answer: string;
+}
+
+export const aiSuggestions: string[] = [
+  "Why did my score drop last week?",
+  "How can I improve my DeFi credit score?",
+  "Which activity contributes most to my reputation?",
+  "What apps have queried my data recently?",
+  "Am I at risk of being flagged as sybil?",
+];
+
+export const cannedAnswers: AiInsight[] = [
+  {
+    question: "Why did my score drop last week?",
+    answer:
+      "Your score dropped by 13 points in May after a small liquidation on Aave. The impact has mostly recovered — over the last 7 months you've added +137 points through consistent repayments and DAO participation.",
+  },
+  {
+    question: "How can I improve my DeFi credit score?",
+    answer:
+      "Three high-impact actions:\n\n1. **Maintain on-time repayments** — your repayment streak is currently 14. Keeping it past 25 unlocks the next tier.\n2. **Diversify protocol exposure** — you're 68% concentrated in Aave. Spreading across 3+ blue-chip protocols boosts your behavior score.\n3. **Link a verified social** — adding a GitHub or ENS attestation would add ~18 points to your social signals component.",
+  },
+  {
+    question: "Which activity contributes most to my reputation?",
+    answer:
+      "Your DeFi behavior accounts for **35% of your score (285 points)**. The largest single contributor is your repayment history on Aave V3, followed by your wallet age (3.2 years) and your DAO voting consistency in Uniswap and ENS governance.",
+  },
+];

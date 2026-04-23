@@ -1,28 +1,28 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  Plus, 
-  LayoutTemplate, 
-  Wallet, 
-  Zap, 
+import {
+  LayoutDashboard,
+  Shield,
+  Lock,
+  Activity,
+  Sparkles,
+  Code2,
   Settings,
   Menu,
-  X,
-  Sparkles
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
-  { title: "Dashboard", url: "/app", icon: LayoutDashboard },
-  { title: "Create", url: "/app/builder", icon: Plus },
-  { title: "Templates", url: "/app/templates", icon: LayoutTemplate },
-  { title: "Wallets", url: "/app/wallets", icon: Wallet },
-  { title: "Workflows", url: "/app/workflows", icon: Zap },
-  { title: "Settings", url: "/app/settings", icon: Settings },
+  { title: "Overview",      url: "/",            icon: LayoutDashboard },
+  { title: "Trust Score",   url: "/score",       icon: Shield },
+  { title: "ZK Proofs",     url: "/proofs",      icon: Lock },
+  { title: "Data Access",   url: "/access",      icon: Activity },
+  { title: "Ask Your Data", url: "/ask",         icon: Sparkles },
+  { title: "Developers",    url: "/developers",  icon: Code2 },
+  { title: "Settings",      url: "/settings",    icon: Settings },
 ];
 
 export const MobileNav = () => {
@@ -30,7 +30,7 @@ export const MobileNav = () => {
   const location = useLocation();
 
   const isActive = (path: string) => {
-    if (path === "/app") return location.pathname === "/app";
+    if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
 
@@ -44,17 +44,15 @@ export const MobileNav = () => {
         </SheetTrigger>
         <SheetContent side="left" className="w-72 p-0">
           <div className="flex flex-col h-full">
-            {/* Logo */}
             <div className="flex items-center gap-3 p-4 border-b border-border/40">
               <div className="h-9 w-9 rounded-xl bg-primary/15 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-primary" />
+                <ShieldCheck className="h-4 w-4 text-primary" />
               </div>
               <span className="font-display font-bold text-lg text-foreground">
-                FlowFi
+                TrustLayer
               </span>
             </div>
 
-            {/* Nav Items */}
             <nav className="flex-1 p-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -80,20 +78,19 @@ export const MobileNav = () => {
   );
 };
 
-// Bottom navigation for mobile
 export const MobileBottomNav = () => {
   const location = useLocation();
-  
+
   const bottomItems = [
-    { title: "Dashboard", url: "/app", icon: LayoutDashboard },
-    { title: "Templates", url: "/app/templates", icon: LayoutTemplate },
-    { title: "Create", url: "/app/builder", icon: Plus, primary: true },
-    { title: "Workflows", url: "/app/workflows", icon: Zap },
-    { title: "Settings", url: "/app/settings", icon: Settings },
+    { title: "Overview",  url: "/",        icon: LayoutDashboard },
+    { title: "Score",     url: "/score",   icon: Shield },
+    { title: "Proofs",    url: "/proofs",  icon: Lock,     primary: true },
+    { title: "Access",    url: "/access",  icon: Activity },
+    { title: "Ask",       url: "/ask",     icon: Sparkles },
   ];
 
   const isActive = (path: string) => {
-    if (path === "/app") return location.pathname === "/app";
+    if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
 
@@ -106,8 +103,8 @@ export const MobileBottomNav = () => {
             to={item.url}
             className={cn(
               "flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all",
-              item.primary 
-                ? "bg-primary text-primary-foreground rounded-full p-3 -mt-6 shadow-lg"
+              item.primary
+                ? "bg-primary text-primary-foreground rounded-full p-3 -mt-6"
                 : isActive(item.url)
                   ? "text-primary"
                   : "text-muted-foreground"

@@ -28,7 +28,6 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-  Lock,
 } from "lucide-react";
 import {
   proofProviders,

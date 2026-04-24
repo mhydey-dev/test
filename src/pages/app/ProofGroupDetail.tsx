@@ -13,6 +13,7 @@ import {
   Ban,
   CheckCircle2,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import {
   proofProviders,

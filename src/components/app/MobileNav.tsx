@@ -9,7 +9,6 @@ import {
   Settings,
   Menu,
   ShieldCheck,
-  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,6 @@ const navItems = [
   { title: "Credit Score", url: "/score", icon: Shield },
   { title: "ZK Proofs", url: "/proofs", icon: Lock },
   { title: "Data Access", url: "/access", icon: Activity },
-  { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "Persona", url: "/persona", icon: Sparkles },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
@@ -86,7 +84,7 @@ export const MobileBottomNav = () => {
     { title: "Score", url: "/score", icon: Shield },
     { title: "Proofs", url: "/proofs", icon: Lock, primary: true },
     { title: "Access", url: "/access", icon: Activity },
-    { title: "Alerts", url: "/notifications", icon: Bell },
+    { title: "Persona", url: "/persona", icon: Sparkles },
   ];
 
   const isActive = (path: string) => {

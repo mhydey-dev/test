@@ -10,7 +10,6 @@ import AppLayout from "./layouts/AppLayout";
 import Overview from "./pages/app/Overview";
 import Score from "./pages/app/Score";
 import Proofs from "./pages/app/Proofs";
-import ProofDetail from "./pages/app/ProofDetail";
 import ProofGroupDetail from "./pages/app/ProofGroupDetail";
 import Access from "./pages/app/Access";
 import Persona from "./pages/app/Persona";
@@ -34,10 +33,9 @@ const App = () => (
                 <Route index element={<Overview />} />
                 <Route path="score" element={<Score />} />
                 <Route path="proofs" element={<Proofs />} />
-                <Route path="proofs/:id" element={<ProofDetail />} />
-              <Route path="proof-groups/:id" element={<ProofGroupDetail />} />
+                <Route path="proof-groups/:id" element={<ProofGroupDetail />} />
                 <Route path="access" element={<Access />} />
-              <Route path="notifications" element={<Notifications />} />
+                <Route path="notifications" element={<Notifications />} />
                 <Route path="persona" element={<Persona />} />
                 <Route path="persona/mint" element={<PersonaMint />} />
                 <Route path="settings" element={<Settings />} />

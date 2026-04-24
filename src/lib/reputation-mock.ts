@@ -91,8 +91,7 @@ export const MAIN_SCORE = 782;
 export const SCORE_TIER: TrustTier = "Excellent";
 export const SCORE_DELTA_30D = +24;
 export const PERCENTILE = 92;
-export const CREDIT_SCORE_OBJECT_ID =
-  "0x9d4c3a1b2e8f6d7c1a0b5e4d3c2b1a99887766554433221100ffeeddccbbaa99";
+export const CREDIT_SCORE_OBJECT_ID = "0x9d4c3a1b2e8...";
 
 export const scoreHistory: ScorePoint[] = [
   { date: "Jan", score: 612 },
@@ -110,12 +109,42 @@ export const scoreHistory: ScorePoint[] = [
 ];
 
 export const scoreBreakdown: ScoreBreakdownItem[] = [
-  { category: "DeFi Behavior", weight: 35, value: 285, color: "hsl(var(--primary))" },
-  { category: "Wallet History", weight: 20, value: 168, color: "hsl(var(--info))" },
-  { category: "DAO Participation", weight: 15, value: 124, color: "hsl(var(--success))" },
-  { category: "NFT Activity", weight: 12, value: 92, color: "hsl(var(--warning))" },
-  { category: "Social Signals", weight: 10, value: 78, color: "hsl(var(--accent-foreground))" },
-  { category: "KYC / Attestations", weight: 8, value: 35, color: "hsl(var(--muted-foreground))" },
+  {
+    category: "DeFi Behavior",
+    weight: 35,
+    value: 285,
+    color: "hsl(var(--primary))",
+  },
+  {
+    category: "Wallet History",
+    weight: 20,
+    value: 168,
+    color: "hsl(var(--info))",
+  },
+  {
+    category: "DAO Participation",
+    weight: 15,
+    value: 124,
+    color: "hsl(var(--success))",
+  },
+  {
+    category: "NFT Activity",
+    weight: 12,
+    value: 92,
+    color: "hsl(var(--warning))",
+  },
+  {
+    category: "Social Signals",
+    weight: 10,
+    value: 78,
+    color: "hsl(var(--accent-foreground))",
+  },
+  {
+    category: "KYC / Attestations",
+    weight: 8,
+    value: 35,
+    color: "hsl(var(--muted-foreground))",
+  },
 ];
 
 export const behavioralTags: BehavioralTag[] = [
@@ -128,14 +157,78 @@ export const behavioralTags: BehavioralTag[] = [
 ];
 
 export const dataConsumers: DataConsumer[] = [
-  { id: "c1", app: "Aave V3", category: "Lending", fields: ["score", "riskProfile"], accessedAt: "2 hours ago", paid: 0.45, status: "active" },
-  { id: "c2", app: "Compound", category: "Lending", fields: ["score", "liquidationHistory"], accessedAt: "8 hours ago", paid: 0.38, status: "active" },
-  { id: "c3", app: "Snapshot", category: "Governance", fields: ["daoParticipation"], accessedAt: "Yesterday", paid: 0.12, status: "active" },
-  { id: "c4", app: "OpenSea Pro", category: "NFT", fields: ["nftActivity", "walletAge"], accessedAt: "2 days ago", paid: 0.22, status: "active" },
-  { id: "c5", app: "Lens Protocol", category: "Social", fields: ["socialSignals"], accessedAt: "3 days ago", paid: 0.08, status: "active" },
-  { id: "c6", app: "GMX", category: "Perps", fields: ["score", "riskProfile"], accessedAt: "5 days ago", paid: 0.55, status: "active" },
-  { id: "c7", app: "ENS Marketplace", category: "Identity", fields: ["walletAge"], accessedAt: "1 week ago", paid: 0.05, status: "revoked" },
-  { id: "c8", app: "Maker DAO", category: "Lending", fields: ["score", "repaymentHistory"], accessedAt: "1 week ago", paid: 0.42, status: "active" },
+  {
+    id: "c1",
+    app: "Aave V3",
+    category: "Lending",
+    fields: ["score", "riskProfile"],
+    accessedAt: "2 hours ago",
+    paid: 0.45,
+    status: "active",
+  },
+  {
+    id: "c2",
+    app: "Compound",
+    category: "Lending",
+    fields: ["score", "liquidationHistory"],
+    accessedAt: "8 hours ago",
+    paid: 0.38,
+    status: "active",
+  },
+  {
+    id: "c3",
+    app: "Snapshot",
+    category: "Governance",
+    fields: ["daoParticipation"],
+    accessedAt: "Yesterday",
+    paid: 0.12,
+    status: "active",
+  },
+  {
+    id: "c4",
+    app: "OpenSea Pro",
+    category: "NFT",
+    fields: ["nftActivity", "walletAge"],
+    accessedAt: "2 days ago",
+    paid: 0.22,
+    status: "active",
+  },
+  {
+    id: "c5",
+    app: "Lens Protocol",
+    category: "Social",
+    fields: ["socialSignals"],
+    accessedAt: "3 days ago",
+    paid: 0.08,
+    status: "active",
+  },
+  {
+    id: "c6",
+    app: "GMX",
+    category: "Perps",
+    fields: ["score", "riskProfile"],
+    accessedAt: "5 days ago",
+    paid: 0.55,
+    status: "active",
+  },
+  {
+    id: "c7",
+    app: "ENS Marketplace",
+    category: "Identity",
+    fields: ["walletAge"],
+    accessedAt: "1 week ago",
+    paid: 0.05,
+    status: "revoked",
+  },
+  {
+    id: "c8",
+    app: "Maker DAO",
+    category: "Lending",
+    fields: ["score", "repaymentHistory"],
+    accessedAt: "1 week ago",
+    paid: 0.42,
+    status: "active",
+  },
 ];
 
 export const earningsByMonth: EarningsPoint[] = [
@@ -147,30 +240,129 @@ export const earningsByMonth: EarningsPoint[] = [
   { month: "Dec", earnings: 41.8 },
 ];
 
-export const TOTAL_EARNINGS = earningsByMonth.reduce((a, p) => a + p.earnings, 0);
+export const TOTAL_EARNINGS = earningsByMonth.reduce(
+  (a, p) => a + p.earnings,
+  0,
+);
 
 export const permissions: PermissionRow[] = [
-  { id: "p1", field: "Credit Score", description: "Your aggregate 0–1000 reputation score", enabled: true, pricePerQuery: 0.1 },
-  { id: "p2", field: "Risk Profile", description: "Low / medium / high risk classification", enabled: true, pricePerQuery: 0.15 },
-  { id: "p3", field: "Repayment History", description: "Loan repayment timeliness signals", enabled: true, pricePerQuery: 0.2 },
-  { id: "p4", field: "Liquidation History", description: "Number and recency of liquidations", enabled: true, pricePerQuery: 0.15 },
-  { id: "p5", field: "DAO Participation", description: "Voting frequency and proposal authoring", enabled: true, pricePerQuery: 0.05 },
-  { id: "p6", field: "NFT Activity", description: "Holdings and trading behavior", enabled: false, pricePerQuery: 0.08 },
-  { id: "p7", field: "Social Signals", description: "Linked GitHub / Twitter reputation", enabled: false, pricePerQuery: 0.06 },
-  { id: "p8", field: "KYC Attestations", description: "Verified identity attestations (no PII)", enabled: false, pricePerQuery: 0.3 },
+  {
+    id: "p1",
+    field: "Credit Score",
+    description: "Your aggregate 0–1000 reputation score",
+    enabled: true,
+    pricePerQuery: 0.1,
+  },
+  {
+    id: "p2",
+    field: "Risk Profile",
+    description: "Low / medium / high risk classification",
+    enabled: true,
+    pricePerQuery: 0.15,
+  },
+  {
+    id: "p3",
+    field: "Repayment History",
+    description: "Loan repayment timeliness signals",
+    enabled: true,
+    pricePerQuery: 0.2,
+  },
+  {
+    id: "p4",
+    field: "Liquidation History",
+    description: "Number and recency of liquidations",
+    enabled: true,
+    pricePerQuery: 0.15,
+  },
+  {
+    id: "p5",
+    field: "DAO Participation",
+    description: "Voting frequency and proposal authoring",
+    enabled: true,
+    pricePerQuery: 0.05,
+  },
+  {
+    id: "p6",
+    field: "NFT Activity",
+    description: "Holdings and trading behavior",
+    enabled: false,
+    pricePerQuery: 0.08,
+  },
+  {
+    id: "p7",
+    field: "Social Signals",
+    description: "Linked GitHub / Twitter reputation",
+    enabled: false,
+    pricePerQuery: 0.06,
+  },
+  {
+    id: "p8",
+    field: "KYC Attestations",
+    description: "Verified identity attestations (no PII)",
+    enabled: false,
+    pricePerQuery: 0.3,
+  },
 ];
 
 // ---------- Providers ----------
 
 export const proofProviders: ProofProvider[] = [
-  { id: "prov-databook", name: "Databook", about: "On-chain reputation engine and ZK proof issuer.", websiteUrl: "https://databook.xyz", imageUrl: "/logos/databook.png" },
-  { id: "prov-x", name: "X", about: "Social account attestations (followers, age, engagement).", websiteUrl: "https://x.com", imageUrl: "/logos/x.png" },
-  { id: "prov-instagram", name: "Instagram", about: "Social account attestations (followers, account age).", websiteUrl: "https://instagram.com", imageUrl: "/logos/instagram.png" },
-  { id: "prov-youtube", name: "YouTube", about: "Channel attestations (subscribers, watch time).", websiteUrl: "https://youtube.com", imageUrl: "/logos/youtube.png" },
-  { id: "prov-bank", name: "Bank Attestor", about: "Balance and income proofs via bank aggregation (no PII disclosed).", websiteUrl: "https://example.com/bank-attestor", imageUrl: "/logos/bank.png" },
-  { id: "prov-land", name: "Land Registry", about: "Verified land ownership without parcel disclosure.", websiteUrl: "https://example.com/land", imageUrl: "/logos/land.png" },
-  { id: "prov-edu", name: "Education Verifier", about: "Student / alumni status without institution disclosure.", websiteUrl: "https://example.com/edu", imageUrl: "/logos/student.png" },
-  { id: "prov-id", name: "Identity Attestor", about: "Sybil-resistance and identity attributes without PII.", websiteUrl: "https://example.com/id", imageUrl: "/logos/identity.png" },
+  {
+    id: "prov-databook",
+    name: "Databook",
+    about: "On-chain reputation engine and ZK proof issuer.",
+    websiteUrl: "https://databook.xyz",
+    imageUrl: "/logos/databook.png",
+  },
+  {
+    id: "prov-x",
+    name: "X",
+    about: "Social account attestations (followers, age, engagement).",
+    websiteUrl: "https://x.com",
+    imageUrl: "/logos/x.png",
+  },
+  {
+    id: "prov-instagram",
+    name: "Instagram",
+    about: "Social account attestations (followers, account age).",
+    websiteUrl: "https://instagram.com",
+    imageUrl: "/logos/instagram.png",
+  },
+  {
+    id: "prov-youtube",
+    name: "YouTube",
+    about: "Channel attestations (subscribers, watch time).",
+    websiteUrl: "https://youtube.com",
+    imageUrl: "/logos/youtube.png",
+  },
+  {
+    id: "prov-bank",
+    name: "Bank Attestor",
+    about: "Balance and income proofs via bank aggregation (no PII disclosed).",
+    websiteUrl: "https://example.com/bank-attestor",
+    imageUrl: "/logos/bank.png",
+  },
+  {
+    id: "prov-land",
+    name: "Land Registry",
+    about: "Verified land ownership without parcel disclosure.",
+    websiteUrl: "https://example.com/land",
+    imageUrl: "/logos/land.png",
+  },
+  {
+    id: "prov-edu",
+    name: "Education Verifier",
+    about: "Student / alumni status without institution disclosure.",
+    websiteUrl: "https://example.com/edu",
+    imageUrl: "/logos/student.png",
+  },
+  {
+    id: "prov-id",
+    name: "Identity Attestor",
+    about: "Sybil-resistance and identity attributes without PII.",
+    websiteUrl: "https://example.com/id",
+    imageUrl: "/logos/identity.png",
+  },
 ];
 
 // ---------- Groups + Levels ----------
@@ -183,7 +375,12 @@ interface GroupSeed {
   category: ZkProofGroup["category"];
   imageUrl: string;
   /** Each tier becomes a level — name is the readable claim shown to the user */
-  levels: { name: string; predicate: string; description: string; completedCount: number }[];
+  levels: {
+    name: string;
+    predicate: string;
+    description: string;
+    completedCount: number;
+  }[];
 }
 
 const GROUP_SEEDS: GroupSeed[] = [
@@ -195,11 +392,36 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Finance",
     imageUrl: "/logos/bank.png",
     levels: [
-      { name: "Bank Balance Above $20", predicate: "bankBalance >= 20", description: "Smallest tier — proves a positive bank balance.", completedCount: 12_540 },
-      { name: "Bank Balance Above $100", predicate: "bankBalance >= 100", description: "Entry tier for many gated dApps.", completedCount: 8_212 },
-      { name: "Bank Balance Above $1k", predicate: "bankBalance >= 1_000", description: "Verified treasury holder tier.", completedCount: 3_104 },
-      { name: "Bank Balance Above $10k", predicate: "bankBalance >= 10_000", description: "Verified high-balance tier.", completedCount: 941 },
-      { name: "Bank Balance Above $100k", predicate: "bankBalance >= 100_000", description: "Top-tier verified balance.", completedCount: 212 },
+      {
+        name: "Bank Balance Above $20",
+        predicate: "bankBalance >= 20",
+        description: "Smallest tier — proves a positive bank balance.",
+        completedCount: 12_540,
+      },
+      {
+        name: "Bank Balance Above $100",
+        predicate: "bankBalance >= 100",
+        description: "Entry tier for many gated dApps.",
+        completedCount: 8_212,
+      },
+      {
+        name: "Bank Balance Above $1k",
+        predicate: "bankBalance >= 1_000",
+        description: "Verified treasury holder tier.",
+        completedCount: 3_104,
+      },
+      {
+        name: "Bank Balance Above $10k",
+        predicate: "bankBalance >= 10_000",
+        description: "Verified high-balance tier.",
+        completedCount: 941,
+      },
+      {
+        name: "Bank Balance Above $100k",
+        predicate: "bankBalance >= 100_000",
+        description: "Top-tier verified balance.",
+        completedCount: 212,
+      },
     ],
   },
   {
@@ -210,10 +432,30 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Social",
     imageUrl: "/logos/x.png",
     levels: [
-      { name: "X Followers Above 100", predicate: "xFollowers >= 100", description: "Casual creator tier.", completedCount: 84_120 },
-      { name: "X Followers Above 1,000", predicate: "xFollowers >= 1_000", description: "Established creator tier.", completedCount: 40_211 },
-      { name: "X Followers Above 10,000", predicate: "xFollowers >= 10_000", description: "Notable creator tier.", completedCount: 8_902 },
-      { name: "X Followers Above 100,000", predicate: "xFollowers >= 100_000", description: "Top-tier creator tier.", completedCount: 612 },
+      {
+        name: "X Followers Above 100",
+        predicate: "xFollowers >= 100",
+        description: "Casual creator tier.",
+        completedCount: 84_120,
+      },
+      {
+        name: "X Followers Above 1,000",
+        predicate: "xFollowers >= 1_000",
+        description: "Established creator tier.",
+        completedCount: 40_211,
+      },
+      {
+        name: "X Followers Above 10,000",
+        predicate: "xFollowers >= 10_000",
+        description: "Notable creator tier.",
+        completedCount: 8_902,
+      },
+      {
+        name: "X Followers Above 100,000",
+        predicate: "xFollowers >= 100_000",
+        description: "Top-tier creator tier.",
+        completedCount: 612,
+      },
     ],
   },
   {
@@ -224,10 +466,30 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Identity",
     imageUrl: "/logos/x.png",
     levels: [
-      { name: "X Account Older Than 6 Months", predicate: "xAccountAge >= 6mo", description: "Basic anti-bot signal.", completedCount: 220_004 },
-      { name: "X Account Older Than 1 Year", predicate: "xAccountAge >= 12mo", description: "Established account.", completedCount: 198_004 },
-      { name: "X Account Older Than 3 Years", predicate: "xAccountAge >= 36mo", description: "Long-term established account.", completedCount: 88_410 },
-      { name: "X Account Older Than 5 Years", predicate: "xAccountAge >= 60mo", description: "Veteran account.", completedCount: 31_220 },
+      {
+        name: "X Account Older Than 6 Months",
+        predicate: "xAccountAge >= 6mo",
+        description: "Basic anti-bot signal.",
+        completedCount: 220_004,
+      },
+      {
+        name: "X Account Older Than 1 Year",
+        predicate: "xAccountAge >= 12mo",
+        description: "Established account.",
+        completedCount: 198_004,
+      },
+      {
+        name: "X Account Older Than 3 Years",
+        predicate: "xAccountAge >= 36mo",
+        description: "Long-term established account.",
+        completedCount: 88_410,
+      },
+      {
+        name: "X Account Older Than 5 Years",
+        predicate: "xAccountAge >= 60mo",
+        description: "Veteran account.",
+        completedCount: 31_220,
+      },
     ],
   },
   {
@@ -238,9 +500,24 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Social",
     imageUrl: "/logos/instagram.png",
     levels: [
-      { name: "Instagram Followers Above 1,000", predicate: "igFollowers >= 1_000", description: "Established creator tier.", completedCount: 18_822 },
-      { name: "Instagram Followers Above 10,000", predicate: "igFollowers >= 10_000", description: "Mid-tier creator.", completedCount: 4_212 },
-      { name: "Instagram Followers Above 100,000", predicate: "igFollowers >= 100_000", description: "Top-tier creator.", completedCount: 521 },
+      {
+        name: "Instagram Followers Above 1,000",
+        predicate: "igFollowers >= 1_000",
+        description: "Established creator tier.",
+        completedCount: 18_822,
+      },
+      {
+        name: "Instagram Followers Above 10,000",
+        predicate: "igFollowers >= 10_000",
+        description: "Mid-tier creator.",
+        completedCount: 4_212,
+      },
+      {
+        name: "Instagram Followers Above 100,000",
+        predicate: "igFollowers >= 100_000",
+        description: "Top-tier creator.",
+        completedCount: 521,
+      },
     ],
   },
   {
@@ -251,10 +528,30 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Social",
     imageUrl: "/logos/youtube.png",
     levels: [
-      { name: "YouTube Subscribers Above 1,000", predicate: "ytSubscribers >= 1_000", description: "Monetization-eligible tier.", completedCount: 7_402 },
-      { name: "YouTube Subscribers Above 10,000", predicate: "ytSubscribers >= 10_000", description: "Established channel.", completedCount: 1_902 },
-      { name: "YouTube Subscribers Above 100,000", predicate: "ytSubscribers >= 100_000", description: "Silver play button tier.", completedCount: 218 },
-      { name: "YouTube Subscribers Above 1,000,000", predicate: "ytSubscribers >= 1_000_000", description: "Gold play button tier.", completedCount: 14 },
+      {
+        name: "YouTube Subscribers Above 1,000",
+        predicate: "ytSubscribers >= 1_000",
+        description: "Monetization-eligible tier.",
+        completedCount: 7_402,
+      },
+      {
+        name: "YouTube Subscribers Above 10,000",
+        predicate: "ytSubscribers >= 10_000",
+        description: "Established channel.",
+        completedCount: 1_902,
+      },
+      {
+        name: "YouTube Subscribers Above 100,000",
+        predicate: "ytSubscribers >= 100_000",
+        description: "Silver play button tier.",
+        completedCount: 218,
+      },
+      {
+        name: "YouTube Subscribers Above 1,000,000",
+        predicate: "ytSubscribers >= 1_000_000",
+        description: "Gold play button tier.",
+        completedCount: 14,
+      },
     ],
   },
   {
@@ -265,9 +562,24 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Finance",
     imageUrl: "/logos/databook.png",
     levels: [
-      { name: "Credit Score Above 500", predicate: "score >= 500", description: "Building reputation tier.", completedCount: 38_120 },
-      { name: "Credit Score Above 700", predicate: "score >= 700", description: "Good reputation tier.", completedCount: 18_423 },
-      { name: "Credit Score Above 850", predicate: "score >= 850", description: "Excellent reputation tier.", completedCount: 4_122 },
+      {
+        name: "Credit Score Above 500",
+        predicate: "score >= 500",
+        description: "Building reputation tier.",
+        completedCount: 38_120,
+      },
+      {
+        name: "Credit Score Above 700",
+        predicate: "score >= 700",
+        description: "Good reputation tier.",
+        completedCount: 18_423,
+      },
+      {
+        name: "Credit Score Above 850",
+        predicate: "score >= 850",
+        description: "Excellent reputation tier.",
+        completedCount: 4_122,
+      },
     ],
   },
   {
@@ -278,33 +590,70 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Identity",
     imageUrl: "/logos/land.png",
     levels: [
-      { name: "Owns At Least 1 Plot", predicate: "ownsLand == true", description: "Verified land ownership.", completedCount: 1_840 },
-      { name: "Owns Plot Worth Above $50k", predicate: "landValue >= 50_000", description: "Verified mid-value land owner.", completedCount: 412 },
-      { name: "Owns Plot Worth Above $500k", predicate: "landValue >= 500_000", description: "Verified high-value land owner.", completedCount: 38 },
+      {
+        name: "Owns At Least 1 Plot",
+        predicate: "ownsLand == true",
+        description: "Verified land ownership.",
+        completedCount: 1_840,
+      },
+      {
+        name: "Owns Plot Worth Above $50k",
+        predicate: "landValue >= 50_000",
+        description: "Verified mid-value land owner.",
+        completedCount: 412,
+      },
+      {
+        name: "Owns Plot Worth Above $500k",
+        predicate: "landValue >= 500_000",
+        description: "Verified high-value land owner.",
+        completedCount: 38,
+      },
     ],
   },
   {
     id: "grp-student",
     title: "Student Status",
-    subtitle: "Prove you are an active student without disclosing the institution.",
+    subtitle:
+      "Prove you are an active student without disclosing the institution.",
     providerId: "prov-edu",
     category: "Identity",
     imageUrl: "/logos/student.png",
     levels: [
-      { name: "Verified Student", predicate: "isStudent == true", description: "Currently enrolled student.", completedCount: 6_812 },
-      { name: "Verified University Student", predicate: "studentLevel == 'university'", description: "Higher education student.", completedCount: 3_104 },
+      {
+        name: "Verified Student",
+        predicate: "isStudent == true",
+        description: "Currently enrolled student.",
+        completedCount: 6_812,
+      },
+      {
+        name: "Verified University Student",
+        predicate: "studentLevel == 'university'",
+        description: "Higher education student.",
+        completedCount: 3_104,
+      },
     ],
   },
   {
     id: "grp-identity",
     title: "Unique Human",
-    subtitle: "Prove this wallet is sybil-resistant and represents a unique human.",
+    subtitle:
+      "Prove this wallet is sybil-resistant and represents a unique human.",
     providerId: "prov-id",
     category: "Identity",
     imageUrl: "/logos/identity.png",
     levels: [
-      { name: "Verified Unique Human", predicate: "sybilScore < 0.2", description: "Basic sybil-resistance check.", completedCount: 41_220 },
-      { name: "Strongly Unique Human", predicate: "sybilScore < 0.05", description: "Strict sybil-resistance check.", completedCount: 15_507 },
+      {
+        name: "Verified Unique Human",
+        predicate: "sybilScore < 0.2",
+        description: "Basic sybil-resistance check.",
+        completedCount: 41_220,
+      },
+      {
+        name: "Strongly Unique Human",
+        predicate: "sybilScore < 0.05",
+        description: "Strict sybil-resistance check.",
+        completedCount: 15_507,
+      },
     ],
   },
   {
@@ -315,9 +664,24 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Finance",
     imageUrl: "/logos/databook.png",
     levels: [
-      { name: "Never Liquidated (12 Months)", predicate: "liquidations(12mo) == 0", description: "No liquidations in the last year.", completedCount: 9_122 },
-      { name: "On-Time Repayments ≥ 5", predicate: "onTimeRepayments >= 5", description: "Clean repayment streak.", completedCount: 6_114 },
-      { name: "On-Time Repayments ≥ 25", predicate: "onTimeRepayments >= 25", description: "Long clean repayment streak.", completedCount: 1_980 },
+      {
+        name: "Never Liquidated (12 Months)",
+        predicate: "liquidations(12mo) == 0",
+        description: "No liquidations in the last year.",
+        completedCount: 9_122,
+      },
+      {
+        name: "On-Time Repayments ≥ 5",
+        predicate: "onTimeRepayments >= 5",
+        description: "Clean repayment streak.",
+        completedCount: 6_114,
+      },
+      {
+        name: "On-Time Repayments ≥ 25",
+        predicate: "onTimeRepayments >= 25",
+        description: "Long clean repayment streak.",
+        completedCount: 1_980,
+      },
     ],
   },
   {
@@ -328,8 +692,18 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Activity",
     imageUrl: "/logos/databook.png",
     levels: [
-      { name: "Voted in 10+ Proposals", predicate: "daoVotes >= 10", description: "Active governance participant.", completedCount: 5_430 },
-      { name: "Voted in 50+ Proposals", predicate: "daoVotes >= 50", description: "Highly active governance participant.", completedCount: 1_810 },
+      {
+        name: "Voted in 10+ Proposals",
+        predicate: "daoVotes >= 10",
+        description: "Active governance participant.",
+        completedCount: 5_430,
+      },
+      {
+        name: "Voted in 50+ Proposals",
+        predicate: "daoVotes >= 50",
+        description: "Highly active governance participant.",
+        completedCount: 1_810,
+      },
     ],
   },
   {
@@ -340,9 +714,24 @@ const GROUP_SEEDS: GroupSeed[] = [
     category: "Identity",
     imageUrl: "/logos/databook.png",
     levels: [
-      { name: "Wallet Older Than 1 Year", predicate: "walletAge >= 12mo", description: "Established wallet.", completedCount: 78_201 },
-      { name: "Wallet Older Than 2 Years", predicate: "walletAge >= 24mo", description: "Long-term wallet.", completedCount: 32_781 },
-      { name: "Wallet Older Than 4 Years", predicate: "walletAge >= 48mo", description: "Veteran wallet.", completedCount: 9_410 },
+      {
+        name: "Wallet Older Than 1 Year",
+        predicate: "walletAge >= 12mo",
+        description: "Established wallet.",
+        completedCount: 78_201,
+      },
+      {
+        name: "Wallet Older Than 2 Years",
+        predicate: "walletAge >= 24mo",
+        description: "Long-term wallet.",
+        completedCount: 32_781,
+      },
+      {
+        name: "Wallet Older Than 4 Years",
+        predicate: "walletAge >= 48mo",
+        description: "Veteran wallet.",
+        completedCount: 9_410,
+      },
     ],
   },
 ];

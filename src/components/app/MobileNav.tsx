@@ -17,8 +17,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const navItems = [
   { title: "Overview", url: "/", icon: LayoutDashboard },
   { title: "Credit Score", url: "/score", icon: Shield },
-  { title: "ZK Proofs", url: "/proofs", icon: Lock },
-  { title: "Data Access", url: "/access", icon: Activity },
+  { title: "Proofs", url: "/proofs", icon: Lock },
+  { title: "Earnings", url: "/access", icon: Activity },
   { title: "Persona", url: "/persona", icon: Sparkles },
   { title: "Settings", url: "/settings", icon: Settings },
 ];

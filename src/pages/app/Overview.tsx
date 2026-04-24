@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import AppHeader from "@/components/app/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,19 +37,14 @@ const Overview = () => {
 
   return (
     <>
-      <AppHeader
-        title="Overview"
-        subtitle="Your AI on-chain identity at a glance"
-      />
-
-      <div className="flex-1 px-4 md:px-8 pb-4 space-y-6">
+      <div className="flex-1 px-4 md:px-8 py-6  space-y-6">
         {/* Hero score card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Card className="rounded-3xl border-border/60 p-6 md:p-10 bg-card overflow-hidden relative">
+          <div className="overflow-hidden relative">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <Badge
@@ -103,7 +97,7 @@ const Overview = () => {
                     </Link>
                   </Button>
                   <Button asChild variant="outline" className="rounded-xl">
-                    <Link to="/proofs">ZK proofs</Link>
+                    <Link to="/proofs">Proofs</Link>
                   </Button>
                 </div>
               </div>
@@ -145,7 +139,7 @@ const Overview = () => {
                 </ResponsiveContainer>
               </div>
             </div>
-          </Card>
+          </div>
         </motion.div>
 
         {/* Stat grid */}
@@ -164,7 +158,7 @@ const Overview = () => {
               sub: "dApps querying you",
             },
             {
-              label: "ZK Proofs Issued",
+              label: "Proofs Issued",
               value: 12,
               icon: Lock,
               sub: "in last 30 days",
@@ -196,101 +190,6 @@ const Overview = () => {
               </Card>
             </motion.div>
           ))}
-        </div>
-
-        {/* Recent activity + quick actions */}
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card className="md:col-span-2 rounded-2xl border-border/60 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="font-display text-lg font-bold">
-                  Recent data access
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  dApps that queried your reputation
-                </p>
-              </div>
-              <Button asChild variant="ghost" size="sm" className="rounded-xl">
-                <Link to="/access">View all</Link>
-              </Button>
-            </div>
-            <div className="space-y-3">
-              {recentConsumers.map((c) => (
-                <div
-                  key={c.id}
-                  className="flex items-center justify-between p-3 rounded-xl border border-border/40 hover:border-border transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Activity className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {c.app}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {c.fields.join(", ")} · {c.accessedAt}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-medium text-success">
-                    +${c.paid.toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="rounded-2xl border-border/60 p-5">
-            <h2 className="font-display text-lg font-bold mb-4">
-              Quick actions
-            </h2>
-            <div className="space-y-2">
-              {[
-                {
-                  to: "/proofs",
-                  icon: Lock,
-                  label: "View ZK proofs",
-                  desc: "Selective disclosure",
-                },
-                {
-                  to: "/persona",
-                  icon: Sparkles,
-                  label: "Ask your data",
-                  desc: "AI-powered insights",
-                },
-                {
-                  to: "/access",
-                  icon: Activity,
-                  label: "Manage permissions",
-                  desc: "Control field access",
-                },
-                {
-                  to: "/developers",
-                  icon: Shield,
-                  label: "API & SDK",
-                  desc: "For dApp builders",
-                },
-              ].map((a) => (
-                <Link
-                  key={a.to}
-                  to={a.to}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-border/40 hover:border-border hover:bg-muted/40 transition-colors"
-                >
-                  <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center">
-                    <a.icon className="h-4 w-4 text-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">
-                      {a.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{a.desc}</p>
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                </Link>
-              ))}
-            </div>
-          </Card>
         </div>
       </div>
     </>

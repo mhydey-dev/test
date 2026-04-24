@@ -1,35 +1,21 @@
 import { useMemo, useState } from "react";
-import AppHeader from "@/components/app/AppHeader";
-import { Card } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Activity, DollarSign, TrendingUp, Ban, Wallet } from "lucide-react";
-import {
-  dataConsumers, earningsByMonth, permissions as initialPerms, TOTAL_EARNINGS,
-} from "@/lib/reputation-mock";
-import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell,
-} from "recharts";
+import { useCurrentAccount, useDAppKit } from "@mysten/dapp-kit-react";
+import { Transaction } from "@mysten/sui/transactions";
+import { Wallet } from "lucide-react";
+import { dataConsumers, TOTAL_EARNINGS } from "@/lib/reputation-mock";
 
 const Access = () => {
-  const [perms, setPerms] = useState(initialPerms);
-  const [consumers, setConsumers] = useState(dataConsumers);
   const [claiming, setClaiming] = useState(false);
   const [claimedUsdc, setClaimedUsdc] = useState(0);
+  const account = useCurrentAccount();
+  const dAppKit = useDAppKit();
 
-  const toggle = (id: string) => {
-    setPerms(perms.map((p) => (p.id === id ? { ...p, enabled: !p.enabled } : p)));
-  };
-
-  const revoke = (id: string) => {
-    setConsumers(consumers.map((c) => (c.id === id ? { ...c, status: "revoked" as const } : c)));
-    toast.success("Access revoked", { description: "This dApp can no longer query your data." });
-  };
-
-  const last30 = consumers.filter((c) => c.status === "active").length;
-  const monthly = earningsByMonth[earningsByMonth.length - 1].earnings;
+  const CLAIM_PACKAGE_ID =
+    "0x0000000000000000000000000000000000000000000000000000000000000000";
+  const CLAIM_MODULE = "earnings_vault";
+  const CLAIM_FUNCTION = "claim";
 
   const claimableUsdc = Math.max(0, TOTAL_EARNINGS - claimedUsdc);
   const suiPerUsdc = 0.62; // mock conversion rate
@@ -40,17 +26,39 @@ const Access = () => {
 
   const claim = async () => {
     if (claiming) return;
+    if (!account?.address) {
+      toast.error("Connect a wallet first");
+      return;
+    }
     if (claimableUsdc <= 0) {
       toast("Nothing to claim");
       return;
     }
     setClaiming(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
+      const tx = new Transaction();
+      tx.moveCall({
+        target: `${CLAIM_PACKAGE_ID}::${CLAIM_MODULE}::${CLAIM_FUNCTION}`,
+        arguments: [tx.pure.address(account.address)],
+      });
+
+      const result = await dAppKit.signAndExecuteTransaction({ transaction: tx });
+      if (result.FailedTransaction) {
+        const failure = result.FailedTransaction.status.error;
+        const failureMessage =
+          typeof failure === "string"
+            ? failure
+            : failure?.message ?? "Claim failed on-chain";
+        throw new Error(failureMessage);
+      }
+
       setClaimedUsdc((v) => v + claimableUsdc);
       toast.success("Claim sent", {
-        description: `Claimed ${claimableSui.toFixed(2)} SUI`,
+        description: `Claimed ${claimableSui.toFixed(2)} SUI · tx ${result.Transaction.digest.slice(0, 10)}…`,
       });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Claim transaction failed";
+      toast.error("Claim failed", { description: message });
     } finally {
       setClaiming(false);
     }
@@ -58,186 +66,71 @@ const Access = () => {
 
   return (
     <>
-      <AppHeader title="Data Access" subtitle="Control what dApps see — and earn from every query" />
-
-      <div className="flex-1 px-4 md:px-8 pb-4 space-y-6">
-        {/* Earnings stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="rounded-2xl border-border/60 p-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground uppercase tracking-wide">Total earnings</span>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <p className="font-display text-3xl font-bold">${TOTAL_EARNINGS.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">All-time from data queries</p>
-          </Card>
-          <Card className="rounded-2xl border-border/60 p-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground uppercase tracking-wide">This month</span>
-              <TrendingUp className="h-4 w-4 text-success" />
-            </div>
-            <p className="font-display text-3xl font-bold text-success">${monthly.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">+22% vs last month</p>
-          </Card>
-          <Card className="rounded-2xl border-border/60 p-5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground uppercase tracking-wide">Active consumers</span>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <p className="font-display text-3xl font-bold">{last30}</p>
-            <p className="text-xs text-muted-foreground mt-1">dApps with permission</p>
-          </Card>
+      <div className="flex-1 px-4 md:px-8 py-6 space-y-6">
+        {/* Claim */}
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2 className="font-display text-xl font-bold">Claim earnings</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Claim your data-access earnings in <span className="text-foreground font-medium">SUI</span>.
+            </p>
+          </div>
+          <Button onClick={claim} className="rounded-xl" disabled={claiming || claimableUsdc <= 0}>
+            <Wallet className="h-4 w-4 mr-1.5" />
+            {claiming ? "Claiming…" : "Claim in SUI"}
+          </Button>
         </div>
 
-        {/* Claim */}
-        <Card className="rounded-2xl border-border/60 p-6">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <h2 className="font-display text-xl font-bold">Claim earnings</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Claim your data-access earnings in <span className="text-foreground font-medium">SUI</span>.
-              </p>
-            </div>
-            <Button onClick={claim} className="rounded-xl" disabled={claiming || claimableUsdc <= 0}>
-              <Wallet className="h-4 w-4 mr-1.5" />
-              {claiming ? "Claiming…" : "Claim in SUI"}
-            </Button>
+        <div className="mt-4 grid sm:grid-cols-3 gap-3">
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Claimable</p>
+            <p className="font-display text-2xl font-bold mt-1">{claimableSui.toFixed(2)} SUI</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              ≈ ${claimableUsdc.toFixed(2)} (mock rate)
+            </p>
           </div>
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Already claimed</p>
+            <p className="font-display text-2xl font-bold mt-1">
+              {(claimedUsdc * suiPerUsdc).toFixed(2)} SUI
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">All-time</p>
+          </div>
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Settlement</p>
+            <p className="text-sm font-medium text-foreground mt-1">On-chain (Sui testnet)</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Signed and executed from your connected wallet
+            </p>
+          </div>
+        </div>
 
-          <div className="mt-4 grid sm:grid-cols-3 gap-3">
-            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Claimable</p>
-              <p className="font-display text-2xl font-bold mt-1">{claimableSui.toFixed(2)} SUI</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                ≈ ${claimableUsdc.toFixed(2)} (mock rate)
-              </p>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Already claimed</p>
-              <p className="font-display text-2xl font-bold mt-1">
-                {(claimedUsdc * suiPerUsdc).toFixed(2)} SUI
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">All-time</p>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Settlement</p>
-              <p className="text-sm font-medium text-foreground mt-1">Instant (demo)</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Replace with on-chain claim logic
-              </p>
-            </div>
+        <section>
+          <h2 className="font-display text-xl font-bold mb-4">Income stream</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/60 text-left">
+                  <th className="py-2 pr-4 font-medium text-muted-foreground">Source</th>
+                  <th className="py-2 pr-4 font-medium text-muted-foreground">Category</th>
+                  <th className="py-2 pr-4 font-medium text-muted-foreground">Status</th>
+                  <th className="py-2 font-medium text-muted-foreground text-right">Income (USD)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dataConsumers.map((consumer) => (
+                  <tr key={consumer.id} className="border-b border-border/40">
+                    <td className="py-3 pr-4">{consumer.app}</td>
+                    <td className="py-3 pr-4 text-muted-foreground">{consumer.category}</td>
+                    <td className="py-3 pr-4 capitalize">{consumer.status}</td>
+                    <td className="py-3 text-right">${consumer.paid.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </Card>
+        </section>
 
-        {/* Earnings chart */}
-        <Card className="rounded-2xl border-border/60 p-6">
-          <h2 className="font-display text-xl font-bold mb-4">Earnings over time</h2>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={earningsByMonth}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "0.75rem",
-                  }}
-                  formatter={(v: number) => [`$${v.toFixed(2)}`, "Earnings"]}
-                />
-                <Bar dataKey="earnings" radius={[6, 6, 0, 0]}>
-                  {earningsByMonth.map((_, i) => (
-                    <Cell key={i} fill="hsl(var(--primary))" />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Permissions */}
-        <Card className="rounded-2xl border-border/60 p-6">
-          <h2 className="font-display text-xl font-bold mb-1">Field permissions</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Toggle which data fields dApps can query, and set a per-query price.
-          </p>
-          <div className="space-y-2">
-            {perms.map((p) => (
-              <div key={p.id} className="flex items-center justify-between p-4 rounded-xl border border-border/40">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-medium text-foreground">{p.field}</p>
-                    <Badge variant="outline" className="rounded-full text-[10px] border-border/60">
-                      ${p.pricePerQuery.toFixed(2)} / query
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">{p.description}</p>
-                </div>
-                <Switch checked={p.enabled} onCheckedChange={() => toggle(p.id)} />
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Consumers timeline */}
-        <Card className="rounded-2xl border-border/60 p-6">
-          <h2 className="font-display text-xl font-bold mb-1">Consumers timeline</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Every dApp that has accessed your data, with payment received.
-          </p>
-          <div className="space-y-3">
-            {consumers.map((c) => (
-              <div
-                key={c.id}
-                className={
-                  "flex items-center justify-between p-4 rounded-xl border " +
-                  (c.status === "revoked"
-                    ? "border-border/30 bg-muted/20 opacity-60"
-                    : "border-border/40 hover:border-border")
-                }
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <Activity className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-medium text-foreground truncate">{c.app}</p>
-                      <Badge variant="outline" className="rounded-full text-[10px] border-border/60">
-                        {c.category}
-                      </Badge>
-                      {c.status === "revoked" && (
-                        <Badge className="rounded-full text-[10px] bg-destructive/10 text-destructive border-destructive/30" variant="outline">
-                          Revoked
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                      {c.fields.join(", ")} · {c.accessedAt}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className={"text-sm font-medium " + (c.status === "active" ? "text-success" : "text-muted-foreground")}>
-                    +${c.paid.toFixed(2)}
-                  </span>
-                  {c.status === "active" && (
-                    <Button
-                      onClick={() => revoke(c.id)}
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                      aria-label="Revoke access"
-                    >
-                      <Ban className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
       </div>
     </>
   );

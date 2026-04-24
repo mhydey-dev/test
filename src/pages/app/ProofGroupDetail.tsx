@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import AppHeader from "@/components/app/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import {
   ShieldCheck,
   Ban,
   CheckCircle2,
-  Sparkles,
+  Users,
   ExternalLink,
 } from "lucide-react";
 import {
@@ -53,7 +52,6 @@ const ProofGroupDetail = () => {
   if (!group) {
     return (
       <>
-        <AppHeader title="Proof group not found" />
         <div className="flex-1 px-4 md:px-8 pb-8">
           <Card className="rounded-2xl border-border/60 border-dashed p-12 text-center">
             <p className="text-muted-foreground mb-4">
@@ -103,12 +101,7 @@ const ProofGroupDetail = () => {
 
   return (
     <>
-      <AppHeader
-        title={group.title}
-        subtitle="Each level proves a stronger claim — generating one deactivates the lower ones"
-      />
-
-      <div className="flex-1 px-4 md:px-8 pb-8 space-y-6">
+      <div className="flex-1 px-4 md:px-8 py-6 space-y-6">
         <Button asChild variant="ghost" size="sm" className="rounded-xl -ml-2">
           <Link to="/proofs">
             <ArrowLeft className="h-4 w-4 mr-1" /> All proof groups
@@ -199,54 +192,6 @@ const ProofGroupDetail = () => {
           </Card>
         </motion.div>
 
-        {/* Provider info */}
-        {provider && (
-          <Card className="rounded-2xl border-border/60 p-5">
-            <div className="flex items-start gap-4 flex-wrap">
-              <div className="h-12 w-12 rounded-xl overflow-hidden border border-border/40 bg-muted/40 shrink-0">
-                <img
-                  src={provider.imageUrl}
-                  alt={`${provider.name} logo`}
-                  className="h-full w-full object-cover"
-                  width={48}
-                  height={48}
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="font-display font-semibold text-foreground">
-                    {provider.name}
-                  </p>
-                  <Badge
-                    variant="outline"
-                    className="rounded-full text-[10px] border-border/60 text-muted-foreground"
-                  >
-                    Provider
-                  </Badge>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {provider.about}
-                </p>
-              </div>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="rounded-xl shrink-0"
-              >
-                <a
-                  href={provider.websiteUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  Visit
-                  <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
-                </a>
-              </Button>
-            </div>
-          </Card>
-        )}
-
         {/* Levels */}
         <div className="space-y-2">
           {levels.map((l) => {
@@ -296,10 +241,8 @@ const ProofGroupDetail = () => {
                     <p className="text-xs text-muted-foreground mt-1">
                       {l.description}
                     </p>
-                    <code className="block text-xs text-muted-foreground font-mono mt-2 break-all">
-                      {l.predicate}
-                    </code>
-                    <p className="text-[11px] text-muted-foreground mt-2">
+                    <p className="text-[11px] text-muted-foreground mt-2 inline-flex items-center gap-1.5">
+                      <Users className="h-3 w-3" />
                       <span className="text-foreground font-medium">
                         {l.completedCount.toLocaleString()}
                       </span>{" "}
@@ -326,7 +269,7 @@ const ProofGroupDetail = () => {
                           <>Generating…</>
                         ) : (
                           <>
-                            <Sparkles className="h-4 w-4 mr-1.5" />
+                            {/* <Sparkles className="h-4 w-4 mr-1.5" /> */}
                             Generate proof
                           </>
                         )}
@@ -347,6 +290,51 @@ const ProofGroupDetail = () => {
             group unlocks all levels again.
           </p>
         </Card>
+
+        {/* Provider footer */}
+        {provider && (
+          <footer className="border-t border-border/60 pt-4 mt-2">
+            <div className="flex items-start gap-4 flex-wrap">
+              <div className="h-10 w-10 rounded-lg overflow-hidden border border-border/40 bg-muted/40 shrink-0">
+                <img
+                  src={provider.imageUrl}
+                  alt={`${provider.name} logo`}
+                  className="h-full w-full object-cover"
+                  width={40}
+                  height={40}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-medium text-foreground">
+                    {provider.name}
+                  </p>
+                  <span className="text-[11px] text-muted-foreground">
+                    Provider
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {provider.about}
+                </p>
+              </div>
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="rounded-xl shrink-0"
+              >
+                <a
+                  href={provider.websiteUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Visit
+                  <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
+                </a>
+              </Button>
+            </div>
+          </footer>
+        )}
       </div>
     </>
   );

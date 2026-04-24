@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import AppHeader from "@/components/app/AppHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -152,39 +151,9 @@ const Notifications = () => {
 
   return (
     <>
-      <AppHeader
-        title="Notifications"
-        subtitle="Alerts, proof requests, and account activity"
-      />
-
       <div className="flex-1 px-4 md:px-8 pb-8 space-y-6">
-        {/* Stat strip */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: "Unread", value: unreadCount },
-            { label: "Total", value: items.length },
-            {
-              label: "Requests",
-              value: items.filter((i) => i.type === "request").length,
-            },
-            {
-              label: "Alerts",
-              value: items.filter((i) => i.type === "alert").length,
-            },
-          ].map((s) => (
-            <Card key={s.label} className="rounded-2xl border-border/60 p-4">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
-                {s.label}
-              </p>
-              <p className="font-display text-2xl font-bold mt-1 text-foreground">
-                {s.value}
-              </p>
-            </Card>
-          ))}
-        </div>
-
         {/* Toolbar */}
-        <Card className="rounded-2xl border-border/60 p-3">
+        <div className="p-1">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <Tabs
               value={filter}
@@ -233,7 +202,7 @@ const Notifications = () => {
               </Button>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* List */}
         <div className="space-y-2">

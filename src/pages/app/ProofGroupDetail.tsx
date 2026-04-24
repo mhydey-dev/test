@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import AppHeader from "@/components/app/AppHeader";
 import { Card } from "@/components/ui/card";
@@ -8,42 +8,45 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   ArrowLeft,
-  ArrowUpRight,
   Lock,
   ShieldCheck,
   Ban,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import {
   proofProviders,
   zkProofGroups,
-  zkProofTemplatesByGroupId,
-  type ZkProofTemplate,
+  zkProofLevelsByGroupId,
+  type ZkProofLevel,
 } from "@/lib/reputation-mock";
 
-type GroupProofStatus = "none" | "active" | "revoked";
+type GroupStatus = "none" | "active" | "revoked";
 
 const ProofGroupDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const providerById = useMemo(
     () => new Map(proofProviders.map((p) => [p.id, p] as const)),
     [],
   );
 
-  const group = useMemo(() => zkProofGroups.find((g) => g.id === id), [id]);
-  const templates = useMemo(
-    () => (id ? zkProofTemplatesByGroupId[id] ?? [] : []),
+  const group = useMemo(
+    () => zkProofGroups.find((g) => g.id === id),
+    [id],
+  );
+  const levels = useMemo(
+    () => (id ? zkProofLevelsByGroupId[id] ?? [] : []),
     [id],
   );
 
-  // mock "user state": one active level per group
-  const [status, setStatus] = useState<GroupProofStatus>("none");
-  const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
+  const [status, setStatus] = useState<GroupStatus>("none");
+  const [activeLevelId, setActiveLevelId] = useState<string | null>(null);
+  const [busyLevelId, setBusyLevelId] = useState<string | null>(null);
 
-  const activeTemplate = useMemo(
-    () => templates.find((t) => t.id === activeTemplateId) ?? null,
-    [templates, activeTemplateId],
+  const activeLevel = useMemo(
+    () => levels.find((l) => l.id === activeLevelId) ?? null,
+    [levels, activeLevelId],
   );
 
   if (!group) {
@@ -56,7 +59,7 @@ const ProofGroupDetail = () => {
               No proof group exists with id <code>{id}</code>.
             </p>
             <Button asChild className="rounded-xl">
-              <Link to="/proofs">Back to proofs</Link>
+              <Link to="/proofs">Back to proof groups</Link>
             </Button>
           </Card>
         </div>
@@ -66,33 +69,42 @@ const ProofGroupDetail = () => {
 
   const provider = providerById.get(group.providerId);
 
-  const generate = (t: ZkProofTemplate) => {
-    // When a higher tier is generated, lower tiers become "locked" (technical less).
+  const generate = async (l: ZkProofLevel) => {
+    setBusyLevelId(l.id);
+    await new Promise((r) => setTimeout(r, 800));
     setStatus("active");
-    setActiveTemplateId(t.id);
-    toast.success("Level proof generated", {
-      description: `Active level: ${t.title}`,
+    setActiveLevelId(l.id);
+    setBusyLevelId(null);
+    toast.success("Proof generated", {
+      description: `${l.name} is now your active level.`,
     });
   };
 
   const revoke = () => {
     setStatus("revoked");
-    setActiveTemplateId(null);
+    setActiveLevelId(null);
     toast.success("Group revoked", {
       description: "All levels are unlocked again.",
     });
   };
 
-  const isLocked = (t: ZkProofTemplate) => {
-    if (status !== "active" || !activeTemplate) return false;
-    return t.levelRank < activeTemplate.levelRank;
+  /**
+   * Locking rule: when a level is active, every level with a LOWER rank
+   * is implied (technical less) and shown as locked / deactivated.
+   * Higher levels remain available to upgrade.
+   */
+  const isLocked = (l: ZkProofLevel) => {
+    if (status !== "active" || !activeLevel) return false;
+    return l.rank < activeLevel.rank;
   };
+  const isActive = (l: ZkProofLevel) =>
+    status === "active" && activeLevelId === l.id;
 
   return (
     <>
       <AppHeader
         title={group.title}
-        subtitle="This group is the parent ZK proof; levels represent your status"
+        subtitle="Each level proves a stronger claim — generating one deactivates the lower ones"
       />
 
       <div className="flex-1 px-4 md:px-8 pb-8 space-y-6">
@@ -102,14 +114,20 @@ const ProofGroupDetail = () => {
           </Link>
         </Button>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        {/* Group header */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
           <Card className="rounded-2xl border-border/60 p-6">
             <div className="flex items-start gap-4 flex-wrap">
-              <div className="h-12 w-12 rounded-xl bg-muted/40 overflow-hidden border border-border/40 shrink-0">
+              <div className="h-14 w-14 rounded-xl bg-muted/40 overflow-hidden border border-border/40 shrink-0">
                 <img
                   src={group.imageUrl}
                   alt={`${group.title} logo`}
-                  className="h-12 w-12 object-cover"
+                  className="h-full w-full object-cover"
+                  width={56}
+                  height={56}
                 />
               </div>
 
@@ -118,6 +136,12 @@ const ProofGroupDetail = () => {
                   <h2 className="font-display text-xl font-bold text-foreground">
                     {group.title}
                   </h2>
+                  <Badge
+                    variant="outline"
+                    className="rounded-full text-[10px] border-border/60 text-muted-foreground"
+                  >
+                    {group.category}
+                  </Badge>
                   {provider && (
                     <Badge
                       variant="outline"
@@ -146,70 +170,62 @@ const ProofGroupDetail = () => {
                 </div>
 
                 <p className="text-sm text-muted-foreground mt-2">
-                  Generating a higher level locks lower levels (technical less).
-                  Revoking unlocks them again.
+                  {group.subtitle}
                 </p>
 
-                {activeTemplate && (
+                {activeLevel && (
                   <div className="mt-3 flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
-                    <span>Current level:</span>
+                    <span>Current active level:</span>
                     <span className="text-foreground font-medium">
-                      {activeTemplate.title}
+                      {activeLevel.name}
                     </span>
                     <span>·</span>
-                    <span>Level {activeTemplate.levelRank}</span>
+                    <span>Level {activeLevel.rank}</span>
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  className="rounded-xl"
-                  onClick={() => navigate("/proofs/new")}
-                >
-                  Custom proof
-                  <ArrowUpRight className="h-4 w-4 ml-1.5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-xl text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
-                  onClick={revoke}
-                  disabled={status !== "active"}
-                >
-                  <Ban className="h-4 w-4 mr-1.5" />
-                  Revoke group
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                className="rounded-xl text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                onClick={revoke}
+                disabled={status !== "active"}
+              >
+                <Ban className="h-4 w-4 mr-1.5" />
+                Revoke group
+              </Button>
             </div>
           </Card>
         </motion.div>
 
+        {/* Levels */}
         <div className="space-y-2">
-          {templates.map((t) => {
-            const locked = isLocked(t);
-            const isActive = status === "active" && activeTemplateId === t.id;
+          {levels.map((l) => {
+            const locked = isLocked(l);
+            const active = isActive(l);
+            const busy = busyLevelId === l.id;
+
             return (
               <Card
-                key={t.id}
+                key={l.id}
                 className={
-                  "rounded-2xl border-border/60 p-5 " +
+                  "rounded-2xl border-border/60 p-5 transition-opacity " +
                   (locked ? "opacity-60" : "")
                 }
               >
                 <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-display font-semibold text-foreground truncate">
-                        {t.title}
+                      <p className="font-display font-semibold text-foreground">
+                        {l.name}
                       </p>
                       <Badge
                         variant="outline"
                         className="rounded-full text-[10px] border-border/60 text-muted-foreground"
                       >
-                        Level {t.levelRank}
+                        Level {l.rank}
                       </Badge>
-                      {isActive && (
+                      {active && (
                         <Badge
                           variant="outline"
                           className="rounded-full text-[10px] border-success/30 bg-success/10 text-success"
@@ -222,43 +238,69 @@ const ProofGroupDetail = () => {
                           variant="outline"
                           className="rounded-full text-[10px] border-border/60 text-muted-foreground"
                         >
-                          <Lock className="h-3 w-3 mr-1" /> Locked
+                          <Lock className="h-3 w-3 mr-1" /> Implied by Level{" "}
+                          {activeLevel?.rank}
                         </Badge>
                       )}
                     </div>
+
                     <p className="text-xs text-muted-foreground mt-1">
-                      {t.description}
+                      {l.description}
                     </p>
                     <code className="block text-xs text-muted-foreground font-mono mt-2 break-all">
-                      {t.predicate}
+                      {l.predicate}
                     </code>
                     <p className="text-[11px] text-muted-foreground mt-2">
                       <span className="text-foreground font-medium">
-                        {t.completedCount.toLocaleString()}
+                        {l.completedCount.toLocaleString()}
                       </span>{" "}
                       completed
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <Button
-                      className="rounded-xl"
-                      onClick={() => generate(t)}
-                      disabled={locked}
-                    >
-                      Generate level proof
-                      <ArrowUpRight className="h-4 w-4 ml-1.5" />
-                    </Button>
+                    {active ? (
+                      <Button
+                        variant="outline"
+                        className="rounded-xl"
+                        disabled
+                      >
+                        <CheckCircle2 className="h-4 w-4 mr-1.5" /> Generated
+                      </Button>
+                    ) : (
+                      <Button
+                        className="rounded-xl"
+                        onClick={() => generate(l)}
+                        disabled={locked || busy}
+                      >
+                        {busy ? (
+                          <>Generating…</>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4 mr-1.5" />
+                            Generate proof
+                          </>
+                        )}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Card>
             );
           })}
         </div>
+
+        <Card className="rounded-2xl border-border/60 border-dashed p-4">
+          <p className="text-xs text-muted-foreground">
+            <span className="text-foreground font-medium">How it works:</span>{" "}
+            generating a higher level proves the lower levels by implication, so
+            those are deactivated to avoid leaking redundant data. Revoking the
+            group unlocks all levels again.
+          </p>
+        </Card>
       </div>
     </>
   );
 };
 
 export default ProofGroupDetail;
-

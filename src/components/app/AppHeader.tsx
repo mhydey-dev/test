@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Wallet, ChevronDown, ShieldCheck } from "lucide-react";
+import { ChevronDown, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { MobileNav } from "@/components/app/MobileNav";
+import NotificationsBell from "@/components/app/NotificationsBell";
 import { Link } from "react-router-dom";
 import { ConnectButton } from "@mysten/dapp-kit-react/ui";
 
@@ -16,9 +17,9 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
     <motion.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="sticky top-0 z-30 h-16 md:h-20 flex items-center justify-between px-4 md:px-8 bg-background/20 backdrop-blur-md"
+      className="sticky top-0 z-30 h-16 md:h-20 flex items-center justify-between px-4 md:px-8 bg-background/70 backdrop-blur-md"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0">
         <MobileNav />
 
         <Link to="/" className="flex items-center gap-2 md:hidden">
@@ -27,12 +28,12 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
           </div>
         </Link>
 
-        <div className="flex flex-col">
-          <h1 className="font-display text-lg md:text-2xl font-bold text-foreground leading-tight">
+        <div className="flex flex-col min-w-0">
+          <h1 className="font-display text-lg md:text-2xl font-bold text-foreground leading-tight truncate">
             {title}
           </h1>
           {subtitle && (
-            <p className="hidden md:block text-xs text-muted-foreground">
+            <p className="hidden md:block text-xs text-muted-foreground truncate">
               {subtitle}
             </p>
           )}
@@ -50,8 +51,8 @@ const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
           <ChevronDown size={14} className="text-muted-foreground" />
         </Button>
 
+        <NotificationsBell />
         <ThemeToggle />
-
         <ConnectButton />
       </div>
     </motion.header>

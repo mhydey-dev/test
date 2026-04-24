@@ -1,18 +1,18 @@
-// Mock data for TrustLayer — AI On-Chain Identity & Reputation
+// Mock data for Databook — AI On-Chain Identity & Reputation
 
 export type TrustTier = "Excellent" | "Good" | "Fair" | "Building";
 
 export interface ScoreBreakdownItem {
   category: string;
-  weight: number; // out of 100
-  value: number; // 0-1000 contribution scaled
-  color: string; // semantic token reference
+  weight: number;
+  value: number;
+  color: string;
 }
 
 export interface ScorePoint {
-  date: string; // ISO short
+  date: string;
   score: number;
-  event?: string; // optional annotation
+  event?: string;
 }
 
 export interface BehavioralTag {
@@ -25,8 +25,8 @@ export interface DataConsumer {
   app: string;
   category: string;
   fields: string[];
-  accessedAt: string; // relative
-  paid: number; // USDC
+  accessedAt: string;
+  paid: number;
   status: "active" | "revoked";
 }
 
@@ -43,62 +43,49 @@ export interface PermissionRow {
   pricePerQuery: number;
 }
 
-export interface ZkProofTemplate {
-  id: string;
-  title: string;
-  description: string;
-  predicate: string;
-  category: "Credit" | "Risk" | "Identity" | "Activity";
-  categoryLabel: string; // UX categories (e.g. "X Followers Count")
-  groupId: string;
-  providerId: string;
-  completedCount: number; // number of users who completed this proof
-  levelRank: number; // within a group: higher = more advanced / higher tier
-}
-
-export type ProofStatus = "active" | "expired" | "revoked" | "pending";
-
 export interface ProofProvider {
   id: string;
   name: string;
   about: string;
   websiteUrl: string;
-  brand: "x" | "instagram" | "bank" | "databook";
+  imageUrl: string;
 }
 
-export interface ProofGroup {
+/**
+ * A ZK Proof Group is the parent verifiable claim.
+ * The "level" inside a group represents how strong the user's status is
+ * (e.g. "Bank Balance Above $20" → "$1k" → "$100k").
+ * Generating a higher level deactivates lower levels (technical less / dominated).
+ * Revoking the group unlocks all levels again.
+ */
+export interface ZkProofLevel {
   id: string;
-  title: string;
+  groupId: string;
+  rank: number; // 1..N (higher = stronger)
+  /** Human, readable name shown in UI: e.g. "Bank Balance Above $20" */
+  name: string;
+  /** Short helper description */
   description: string;
-  providerId: ProofProvider["id"];
+  /** Predicate evaluated by ZK circuit */
+  predicate: string;
+  /** Number of users who have completed this level */
+  completedCount: number;
 }
 
 export interface ZkProofGroup {
   id: string;
-  title: string; // e.g. "X Followers Count"
-  description: string;
+  /** Parent group title, e.g. "Bank Balance" */
+  title: string;
+  /** Short subtitle */
+  subtitle: string;
   providerId: ProofProvider["id"];
-  imageUrl: string; // /logos/*.svg
+  /** Visual badge shown for the category */
+  category: "Finance" | "Social" | "Identity" | "Activity";
+  /** Real provider image (e.g. /logos/x.png) */
+  imageUrl: string;
 }
 
-export interface IssuedProof {
-  id: string;
-  templateId: string;
-  template: string;
-  predicate: string;
-  category: "Credit" | "Risk" | "Identity" | "Activity";
-  issuedAt: string; // human readable
-  issuedAtMs: number; // for sorting
-  expiresAt: string; // human readable
-  expiresInDays: number; // negative if expired
-  consumer?: string;
-  consumerCategory?: string;
-  status: ProofStatus;
-  proofHash: string;
-  verifications: number;
-  size: string; // e.g. "2.4 KB"
-  zkSystem: "Groth16" | "PLONK" | "Halo2";
-}
+// ---------- Top-level numbers ----------
 
 export const MAIN_SCORE = 782;
 export const SCORE_TIER: TrustTier = "Excellent";
@@ -123,42 +110,12 @@ export const scoreHistory: ScorePoint[] = [
 ];
 
 export const scoreBreakdown: ScoreBreakdownItem[] = [
-  {
-    category: "DeFi Behavior",
-    weight: 35,
-    value: 285,
-    color: "hsl(var(--primary))",
-  },
-  {
-    category: "Wallet History",
-    weight: 20,
-    value: 168,
-    color: "hsl(var(--info))",
-  },
-  {
-    category: "DAO Participation",
-    weight: 15,
-    value: 124,
-    color: "hsl(var(--success))",
-  },
-  {
-    category: "NFT Activity",
-    weight: 12,
-    value: 92,
-    color: "hsl(var(--warning))",
-  },
-  {
-    category: "Social Signals",
-    weight: 10,
-    value: 78,
-    color: "hsl(var(--accent-foreground))",
-  },
-  {
-    category: "KYC / Attestations",
-    weight: 8,
-    value: 35,
-    color: "hsl(var(--muted-foreground))",
-  },
+  { category: "DeFi Behavior", weight: 35, value: 285, color: "hsl(var(--primary))" },
+  { category: "Wallet History", weight: 20, value: 168, color: "hsl(var(--info))" },
+  { category: "DAO Participation", weight: 15, value: 124, color: "hsl(var(--success))" },
+  { category: "NFT Activity", weight: 12, value: 92, color: "hsl(var(--warning))" },
+  { category: "Social Signals", weight: 10, value: 78, color: "hsl(var(--accent-foreground))" },
+  { category: "KYC / Attestations", weight: 8, value: 35, color: "hsl(var(--muted-foreground))" },
 ];
 
 export const behavioralTags: BehavioralTag[] = [
@@ -171,78 +128,14 @@ export const behavioralTags: BehavioralTag[] = [
 ];
 
 export const dataConsumers: DataConsumer[] = [
-  {
-    id: "c1",
-    app: "Aave V3",
-    category: "Lending",
-    fields: ["score", "riskProfile"],
-    accessedAt: "2 hours ago",
-    paid: 0.45,
-    status: "active",
-  },
-  {
-    id: "c2",
-    app: "Compound",
-    category: "Lending",
-    fields: ["score", "liquidationHistory"],
-    accessedAt: "8 hours ago",
-    paid: 0.38,
-    status: "active",
-  },
-  {
-    id: "c3",
-    app: "Snapshot",
-    category: "Governance",
-    fields: ["daoParticipation"],
-    accessedAt: "Yesterday",
-    paid: 0.12,
-    status: "active",
-  },
-  {
-    id: "c4",
-    app: "OpenSea Pro",
-    category: "NFT",
-    fields: ["nftActivity", "walletAge"],
-    accessedAt: "2 days ago",
-    paid: 0.22,
-    status: "active",
-  },
-  {
-    id: "c5",
-    app: "Lens Protocol",
-    category: "Social",
-    fields: ["socialSignals"],
-    accessedAt: "3 days ago",
-    paid: 0.08,
-    status: "active",
-  },
-  {
-    id: "c6",
-    app: "GMX",
-    category: "Perps",
-    fields: ["score", "riskProfile"],
-    accessedAt: "5 days ago",
-    paid: 0.55,
-    status: "active",
-  },
-  {
-    id: "c7",
-    app: "ENS Marketplace",
-    category: "Identity",
-    fields: ["walletAge"],
-    accessedAt: "1 week ago",
-    paid: 0.05,
-    status: "revoked",
-  },
-  {
-    id: "c8",
-    app: "Maker DAO",
-    category: "Lending",
-    fields: ["score", "repaymentHistory"],
-    accessedAt: "1 week ago",
-    paid: 0.42,
-    status: "active",
-  },
+  { id: "c1", app: "Aave V3", category: "Lending", fields: ["score", "riskProfile"], accessedAt: "2 hours ago", paid: 0.45, status: "active" },
+  { id: "c2", app: "Compound", category: "Lending", fields: ["score", "liquidationHistory"], accessedAt: "8 hours ago", paid: 0.38, status: "active" },
+  { id: "c3", app: "Snapshot", category: "Governance", fields: ["daoParticipation"], accessedAt: "Yesterday", paid: 0.12, status: "active" },
+  { id: "c4", app: "OpenSea Pro", category: "NFT", fields: ["nftActivity", "walletAge"], accessedAt: "2 days ago", paid: 0.22, status: "active" },
+  { id: "c5", app: "Lens Protocol", category: "Social", fields: ["socialSignals"], accessedAt: "3 days ago", paid: 0.08, status: "active" },
+  { id: "c6", app: "GMX", category: "Perps", fields: ["score", "riskProfile"], accessedAt: "5 days ago", paid: 0.55, status: "active" },
+  { id: "c7", app: "ENS Marketplace", category: "Identity", fields: ["walletAge"], accessedAt: "1 week ago", paid: 0.05, status: "revoked" },
+  { id: "c8", app: "Maker DAO", category: "Lending", fields: ["score", "repaymentHistory"], accessedAt: "1 week ago", paid: 0.42, status: "active" },
 ];
 
 export const earningsByMonth: EarningsPoint[] = [
@@ -254,587 +147,239 @@ export const earningsByMonth: EarningsPoint[] = [
   { month: "Dec", earnings: 41.8 },
 ];
 
-export const TOTAL_EARNINGS = earningsByMonth.reduce(
-  (a, p) => a + p.earnings,
-  0,
-);
+export const TOTAL_EARNINGS = earningsByMonth.reduce((a, p) => a + p.earnings, 0);
 
 export const permissions: PermissionRow[] = [
-  {
-    id: "p1",
-    field: "Credit Score",
-    description: "Your aggregate 0–1000 reputation score",
-    enabled: true,
-    pricePerQuery: 0.1,
-  },
-  {
-    id: "p2",
-    field: "Risk Profile",
-    description: "Low / medium / high risk classification",
-    enabled: true,
-    pricePerQuery: 0.15,
-  },
-  {
-    id: "p3",
-    field: "Repayment History",
-    description: "Loan repayment timeliness signals",
-    enabled: true,
-    pricePerQuery: 0.2,
-  },
-  {
-    id: "p4",
-    field: "Liquidation History",
-    description: "Number and recency of liquidations",
-    enabled: true,
-    pricePerQuery: 0.15,
-  },
-  {
-    id: "p5",
-    field: "DAO Participation",
-    description: "Voting frequency and proposal authoring",
-    enabled: true,
-    pricePerQuery: 0.05,
-  },
-  {
-    id: "p6",
-    field: "NFT Activity",
-    description: "Holdings and trading behavior",
-    enabled: false,
-    pricePerQuery: 0.08,
-  },
-  {
-    id: "p7",
-    field: "Social Signals",
-    description: "Linked GitHub / Twitter reputation",
-    enabled: false,
-    pricePerQuery: 0.06,
-  },
-  {
-    id: "p8",
-    field: "KYC Attestations",
-    description: "Verified identity attestations (no PII)",
-    enabled: false,
-    pricePerQuery: 0.3,
-  },
+  { id: "p1", field: "Credit Score", description: "Your aggregate 0–1000 reputation score", enabled: true, pricePerQuery: 0.1 },
+  { id: "p2", field: "Risk Profile", description: "Low / medium / high risk classification", enabled: true, pricePerQuery: 0.15 },
+  { id: "p3", field: "Repayment History", description: "Loan repayment timeliness signals", enabled: true, pricePerQuery: 0.2 },
+  { id: "p4", field: "Liquidation History", description: "Number and recency of liquidations", enabled: true, pricePerQuery: 0.15 },
+  { id: "p5", field: "DAO Participation", description: "Voting frequency and proposal authoring", enabled: true, pricePerQuery: 0.05 },
+  { id: "p6", field: "NFT Activity", description: "Holdings and trading behavior", enabled: false, pricePerQuery: 0.08 },
+  { id: "p7", field: "Social Signals", description: "Linked GitHub / Twitter reputation", enabled: false, pricePerQuery: 0.06 },
+  { id: "p8", field: "KYC Attestations", description: "Verified identity attestations (no PII)", enabled: false, pricePerQuery: 0.3 },
 ];
+
+// ---------- Providers ----------
 
 export const proofProviders: ProofProvider[] = [
-  {
-    id: "prov-databook",
-    name: "Databook",
-    about: "On-chain reputation engine and ZK proof issuer.",
-    websiteUrl: "https://databook.xyz",
-    brand: "databook",
-  },
-  {
-    id: "prov-x",
-    name: "X",
-    about: "Social account attestations (followers, age, and engagement).",
-    websiteUrl: "https://x.com",
-    brand: "x",
-  },
-  {
-    id: "prov-instagram",
-    name: "Instagram",
-    about: "Social account attestations (followers, account age).",
-    websiteUrl: "https://instagram.com",
-    brand: "instagram",
-  },
-  {
-    id: "prov-bank",
-    name: "Bank Attestor",
-    about: "Balance and income proofs via bank aggregation (no PII disclosed).",
-    websiteUrl: "https://example.com/bank-attestor",
-    brand: "bank",
-  },
+  { id: "prov-databook", name: "Databook", about: "On-chain reputation engine and ZK proof issuer.", websiteUrl: "https://databook.xyz", imageUrl: "/logos/databook.png" },
+  { id: "prov-x", name: "X", about: "Social account attestations (followers, age, engagement).", websiteUrl: "https://x.com", imageUrl: "/logos/x.png" },
+  { id: "prov-instagram", name: "Instagram", about: "Social account attestations (followers, account age).", websiteUrl: "https://instagram.com", imageUrl: "/logos/instagram.png" },
+  { id: "prov-youtube", name: "YouTube", about: "Channel attestations (subscribers, watch time).", websiteUrl: "https://youtube.com", imageUrl: "/logos/youtube.png" },
+  { id: "prov-bank", name: "Bank Attestor", about: "Balance and income proofs via bank aggregation (no PII disclosed).", websiteUrl: "https://example.com/bank-attestor", imageUrl: "/logos/bank.png" },
+  { id: "prov-land", name: "Land Registry", about: "Verified land ownership without parcel disclosure.", websiteUrl: "https://example.com/land", imageUrl: "/logos/land.png" },
+  { id: "prov-edu", name: "Education Verifier", about: "Student / alumni status without institution disclosure.", websiteUrl: "https://example.com/edu", imageUrl: "/logos/student.png" },
+  { id: "prov-id", name: "Identity Attestor", about: "Sybil-resistance and identity attributes without PII.", websiteUrl: "https://example.com/id", imageUrl: "/logos/identity.png" },
 ];
 
-export const zkTemplates: ZkProofTemplate[] = [
-  {
-    id: "z1",
-    title: "Score Above Threshold",
-    description:
-      "Prove your credit score exceeds a value without revealing it.",
-    predicate: "score > 700",
-    category: "Credit",
-    categoryLabel: "Bank Credit Score",
-    groupId: "grp-credit-score",
-    providerId: "prov-databook",
-    completedCount: 18423,
-    levelRank: 1,
-  },
-  {
-    id: "z2",
-    title: "Never Liquidated",
-    description: "Prove you have zero liquidations in the past 12 months.",
-    predicate: "liquidations(12mo) == 0",
-    category: "Risk",
-    categoryLabel: "Risk Profile",
-    groupId: "grp-risk",
-    providerId: "prov-databook",
-    completedCount: 9122,
-    levelRank: 1,
-  },
-  {
-    id: "z3",
-    title: "Wallet Age",
-    description: "Prove your wallet is older than N months.",
-    predicate: "walletAge > 24mo",
-    category: "Identity",
-    categoryLabel: "Identity",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 32781,
-    levelRank: 2,
-  },
-  {
-    id: "z4",
-    title: "Active Governance",
-    description: "Prove you've voted in at least N DAO proposals.",
-    predicate: "daoVotes >= 10",
-    category: "Activity",
-    categoryLabel: "On-chain Activity",
-    groupId: "grp-risk",
-    providerId: "prov-databook",
-    completedCount: 5430,
-    levelRank: 1,
-  },
-  {
-    id: "z5",
-    title: "Repayment Streak",
-    description: "Prove a clean repayment record over a window.",
-    predicate: "onTimeRepayments >= 5",
-    category: "Credit",
-    categoryLabel: "Creditworthiness",
-    groupId: "grp-risk",
-    providerId: "prov-databook",
-    completedCount: 6114,
-    levelRank: 2,
-  },
-  {
-    id: "z6",
-    title: "Unique Human",
-    description: "Prove this wallet is sybil-resistant via clustering.",
-    predicate: "sybilScore < 0.1",
-    category: "Identity",
-    categoryLabel: "Sybil Resistance",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 15507,
-    levelRank: 3,
-  },
-  {
-    id: "z7",
-    title: "X Followers ≥ 1k",
-    description: "Prove your X account has at least 1,000 followers.",
-    predicate: "xFollowers >= 1_000",
-    category: "Activity",
-    categoryLabel: "X Followers Count",
-    groupId: "grp-x-followers",
-    providerId: "prov-x",
-    completedCount: 40211,
-    levelRank: 1,
-  },
-  {
-    id: "z8",
-    title: "X Followers ≥ 2k",
-    description: "Prove your X account has at least 2,000 followers.",
-    predicate: "xFollowers >= 2_000",
-    category: "Activity",
-    categoryLabel: "X Followers Count",
-    groupId: "grp-x-followers",
-    providerId: "prov-x",
-    completedCount: 26102,
-    levelRank: 2,
-  },
-  {
-    id: "z9",
-    title: "X Followers ≥ 5k",
-    description: "Prove your X account has at least 5,000 followers.",
-    predicate: "xFollowers >= 5_000",
-    category: "Activity",
-    categoryLabel: "X Followers Count",
-    groupId: "grp-x-followers",
-    providerId: "prov-x",
-    completedCount: 13988,
-    levelRank: 3,
-  },
-  {
-    id: "z10",
-    title: "X Account Age ≥ 1 year",
-    description: "Prove your X account is at least 1 year old.",
-    predicate: "xAccountAge >= 12mo",
-    category: "Identity",
-    categoryLabel: "X Account Age",
-    groupId: "grp-x-age",
-    providerId: "prov-x",
-    completedCount: 198004,
-    levelRank: 1,
-  },
-  {
-    id: "z11",
-    title: "X Account Age ≥ 2 years",
-    description: "Prove your X account is at least 2 years old.",
-    predicate: "xAccountAge >= 24mo",
-    category: "Identity",
-    categoryLabel: "X Account Age",
-    groupId: "grp-x-age",
-    providerId: "prov-x",
-    completedCount: 121443,
-    levelRank: 2,
-  },
-  {
-    id: "z12",
-    title: "Instagram Followers ≥ 1k",
-    description: "Prove your Instagram has at least 1,000 followers.",
-    predicate: "igFollowers >= 1_000",
-    category: "Activity",
-    categoryLabel: "Instagram Followers Count",
-    groupId: "grp-instagram-followers",
-    providerId: "prov-instagram",
-    completedCount: 18822,
-    levelRank: 1,
-  },
-  {
-    id: "z13",
-    title: "Instagram Followers ≥ 5k",
-    description: "Prove your Instagram has at least 5,000 followers.",
-    predicate: "igFollowers >= 5_000",
-    category: "Activity",
-    categoryLabel: "Instagram Followers Count",
-    groupId: "grp-instagram-followers",
-    providerId: "prov-instagram",
-    completedCount: 6514,
-    levelRank: 2,
-  },
-  {
-    id: "z14",
-    title: "Instagram Account Age ≥ 1 year",
-    description: "Prove your Instagram account is at least 1 year old.",
-    predicate: "igAccountAge >= 12mo",
-    category: "Identity",
-    categoryLabel: "Instagram Account Age",
-    groupId: "grp-instagram-age",
-    providerId: "prov-instagram",
-    completedCount: 45602,
-    levelRank: 1,
-  },
-  {
-    id: "z15",
-    title: "Bank Balance ≥ $100",
-    description: "Prove your bank balance is at least $100.",
-    predicate: "bankBalance >= 100",
-    category: "Credit",
-    categoryLabel: "Bank Account Balance",
-    groupId: "grp-bank-balance",
-    providerId: "prov-bank",
-    completedCount: 3221,
-    levelRank: 1,
-  },
-  {
-    id: "z16",
-    title: "Bank Balance ≥ $1k",
-    description: "Prove your bank balance is at least $1,000.",
-    predicate: "bankBalance >= 1_000",
-    category: "Credit",
-    categoryLabel: "Bank Account Balance",
-    groupId: "grp-bank-balance",
-    providerId: "prov-bank",
-    completedCount: 1983,
-    levelRank: 2,
-  },
-  {
-    id: "z17",
-    title: "Bank Balance ≥ $100k",
-    description: "Prove your bank balance is at least $100,000.",
-    predicate: "bankBalance >= 100_000",
-    category: "Credit",
-    categoryLabel: "Bank Account Balance",
-    groupId: "grp-bank-balance",
-    providerId: "prov-bank",
-    completedCount: 212,
-    levelRank: 3,
-  },
-  {
-    id: "z18",
-    title: "YouTube Subscribers ≥ 1k",
-    description: "Prove your YouTube channel has at least 1,000 subscribers.",
-    predicate: "ytSubscribers >= 1_000",
-    category: "Activity",
-    categoryLabel: "YouTube Subscribe",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 7402,
-    levelRank: 1,
-  },
-  {
-    id: "z19",
-    title: "YouTube Likes ≥ 10k",
-    description: "Prove your channel has at least 10,000 lifetime likes.",
-    predicate: "ytLikes >= 10_000",
-    category: "Activity",
-    categoryLabel: "YouTube Liked",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 3104,
-    levelRank: 2,
-  },
-  {
-    id: "z20",
-    title: "Land Ownership",
-    description: "Prove you own land without revealing parcel identity.",
-    predicate: "ownsLand == true",
-    category: "Identity",
-    categoryLabel: "Land Ownership",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 182,
-    levelRank: 1,
-  },
-  {
-    id: "z21",
-    title: "Student Status",
-    description: "Prove you are a student (no institution disclosed).",
-    predicate: "isStudent == true",
-    category: "Identity",
-    categoryLabel: "Student",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 812,
-    levelRank: 1,
-  },
-  {
-    id: "z22",
-    title: "Gender Proof",
-    description: "Prove a gender attribute without revealing identity.",
-    predicate: "gender in {F, M, X}",
-    category: "Identity",
-    categoryLabel: "Gender",
-    groupId: "grp-identity",
-    providerId: "prov-databook",
-    completedCount: 354,
-    levelRank: 1,
-  },
-];
+// ---------- Groups + Levels ----------
 
-export const proofGroups: ProofGroup[] = [
+interface GroupSeed {
+  id: string;
+  title: string;
+  subtitle: string;
+  providerId: string;
+  category: ZkProofGroup["category"];
+  imageUrl: string;
+  /** Each tier becomes a level — name is the readable claim shown to the user */
+  levels: { name: string; predicate: string; description: string; completedCount: number }[];
+}
+
+const GROUP_SEEDS: GroupSeed[] = [
   {
-    id: "grp-credit-score",
-    title: "Credit score tiers",
-    description: "Prove score thresholds without revealing your score.",
-    providerId: "prov-databook",
+    id: "grp-bank-balance",
+    title: "Bank Balance",
+    subtitle: "Prove your bank balance exceeds a tier — without revealing it.",
+    providerId: "prov-bank",
+    category: "Finance",
+    imageUrl: "/logos/bank.png",
+    levels: [
+      { name: "Bank Balance Above $20", predicate: "bankBalance >= 20", description: "Smallest tier — proves a positive bank balance.", completedCount: 12_540 },
+      { name: "Bank Balance Above $100", predicate: "bankBalance >= 100", description: "Entry tier for many gated dApps.", completedCount: 8_212 },
+      { name: "Bank Balance Above $1k", predicate: "bankBalance >= 1_000", description: "Verified treasury holder tier.", completedCount: 3_104 },
+      { name: "Bank Balance Above $10k", predicate: "bankBalance >= 10_000", description: "Verified high-balance tier.", completedCount: 941 },
+      { name: "Bank Balance Above $100k", predicate: "bankBalance >= 100_000", description: "Top-tier verified balance.", completedCount: 212 },
+    ],
   },
   {
     id: "grp-x-followers",
-    title: "X follower tiers",
-    description: "Prove follower milestones for X accounts.",
+    title: "X Followers",
+    subtitle: "Prove your X (Twitter) follower count meets a milestone.",
     providerId: "prov-x",
+    category: "Social",
+    imageUrl: "/logos/x.png",
+    levels: [
+      { name: "X Followers Above 100", predicate: "xFollowers >= 100", description: "Casual creator tier.", completedCount: 84_120 },
+      { name: "X Followers Above 1,000", predicate: "xFollowers >= 1_000", description: "Established creator tier.", completedCount: 40_211 },
+      { name: "X Followers Above 10,000", predicate: "xFollowers >= 10_000", description: "Notable creator tier.", completedCount: 8_902 },
+      { name: "X Followers Above 100,000", predicate: "xFollowers >= 100_000", description: "Top-tier creator tier.", completedCount: 612 },
+    ],
   },
   {
     id: "grp-x-age",
-    title: "X account age",
-    description: "Prove the age of your X account.",
+    title: "X Account Age",
+    subtitle: "Prove your X account has existed for at least N months.",
     providerId: "prov-x",
+    category: "Identity",
+    imageUrl: "/logos/x.png",
+    levels: [
+      { name: "X Account Older Than 6 Months", predicate: "xAccountAge >= 6mo", description: "Basic anti-bot signal.", completedCount: 220_004 },
+      { name: "X Account Older Than 1 Year", predicate: "xAccountAge >= 12mo", description: "Established account.", completedCount: 198_004 },
+      { name: "X Account Older Than 3 Years", predicate: "xAccountAge >= 36mo", description: "Long-term established account.", completedCount: 88_410 },
+      { name: "X Account Older Than 5 Years", predicate: "xAccountAge >= 60mo", description: "Veteran account.", completedCount: 31_220 },
+    ],
   },
   {
     id: "grp-instagram-followers",
-    title: "Instagram follower tiers",
-    description: "Prove follower milestones for Instagram accounts.",
+    title: "Instagram Followers",
+    subtitle: "Prove your Instagram follower count meets a milestone.",
     providerId: "prov-instagram",
+    category: "Social",
+    imageUrl: "/logos/instagram.png",
+    levels: [
+      { name: "Instagram Followers Above 1,000", predicate: "igFollowers >= 1_000", description: "Established creator tier.", completedCount: 18_822 },
+      { name: "Instagram Followers Above 10,000", predicate: "igFollowers >= 10_000", description: "Mid-tier creator.", completedCount: 4_212 },
+      { name: "Instagram Followers Above 100,000", predicate: "igFollowers >= 100_000", description: "Top-tier creator.", completedCount: 521 },
+    ],
   },
   {
-    id: "grp-instagram-age",
-    title: "Instagram account age",
-    description: "Prove the age of your Instagram account.",
-    providerId: "prov-instagram",
+    id: "grp-youtube-subs",
+    title: "YouTube Subscribers",
+    subtitle: "Prove your YouTube channel meets a subscriber milestone.",
+    providerId: "prov-youtube",
+    category: "Social",
+    imageUrl: "/logos/youtube.png",
+    levels: [
+      { name: "YouTube Subscribers Above 1,000", predicate: "ytSubscribers >= 1_000", description: "Monetization-eligible tier.", completedCount: 7_402 },
+      { name: "YouTube Subscribers Above 10,000", predicate: "ytSubscribers >= 10_000", description: "Established channel.", completedCount: 1_902 },
+      { name: "YouTube Subscribers Above 100,000", predicate: "ytSubscribers >= 100_000", description: "Silver play button tier.", completedCount: 218 },
+      { name: "YouTube Subscribers Above 1,000,000", predicate: "ytSubscribers >= 1_000_000", description: "Gold play button tier.", completedCount: 14 },
+    ],
   },
   {
-    id: "grp-bank-balance",
-    title: "Bank balance tiers",
-    description: "Prove balance thresholds without revealing exact balances.",
-    providerId: "prov-bank",
-  },
-  {
-    id: "grp-risk",
-    title: "Risk & behavior",
-    description: "Prove risk signals like liquidations or repayment streaks.",
+    id: "grp-credit-score",
+    title: "Credit Score",
+    subtitle: "Prove your aggregated credit score is above a threshold.",
     providerId: "prov-databook",
+    category: "Finance",
+    imageUrl: "/logos/databook.png",
+    levels: [
+      { name: "Credit Score Above 500", predicate: "score >= 500", description: "Building reputation tier.", completedCount: 38_120 },
+      { name: "Credit Score Above 700", predicate: "score >= 700", description: "Good reputation tier.", completedCount: 18_423 },
+      { name: "Credit Score Above 850", predicate: "score >= 850", description: "Excellent reputation tier.", completedCount: 4_122 },
+    ],
+  },
+  {
+    id: "grp-land",
+    title: "Land Ownership",
+    subtitle: "Prove you own land without revealing the parcel.",
+    providerId: "prov-land",
+    category: "Identity",
+    imageUrl: "/logos/land.png",
+    levels: [
+      { name: "Owns At Least 1 Plot", predicate: "ownsLand == true", description: "Verified land ownership.", completedCount: 1_840 },
+      { name: "Owns Plot Worth Above $50k", predicate: "landValue >= 50_000", description: "Verified mid-value land owner.", completedCount: 412 },
+      { name: "Owns Plot Worth Above $500k", predicate: "landValue >= 500_000", description: "Verified high-value land owner.", completedCount: 38 },
+    ],
+  },
+  {
+    id: "grp-student",
+    title: "Student Status",
+    subtitle: "Prove you are an active student without disclosing the institution.",
+    providerId: "prov-edu",
+    category: "Identity",
+    imageUrl: "/logos/student.png",
+    levels: [
+      { name: "Verified Student", predicate: "isStudent == true", description: "Currently enrolled student.", completedCount: 6_812 },
+      { name: "Verified University Student", predicate: "studentLevel == 'university'", description: "Higher education student.", completedCount: 3_104 },
+    ],
   },
   {
     id: "grp-identity",
-    title: "Identity & sybil",
-    description: "Prove identity signals like wallet age or uniqueness.",
+    title: "Unique Human",
+    subtitle: "Prove this wallet is sybil-resistant and represents a unique human.",
+    providerId: "prov-id",
+    category: "Identity",
+    imageUrl: "/logos/identity.png",
+    levels: [
+      { name: "Verified Unique Human", predicate: "sybilScore < 0.2", description: "Basic sybil-resistance check.", completedCount: 41_220 },
+      { name: "Strongly Unique Human", predicate: "sybilScore < 0.05", description: "Strict sybil-resistance check.", completedCount: 15_507 },
+    ],
+  },
+  {
+    id: "grp-defi",
+    title: "DeFi Reputation",
+    subtitle: "Prove sustained, healthy DeFi behavior on-chain.",
     providerId: "prov-databook",
+    category: "Finance",
+    imageUrl: "/logos/databook.png",
+    levels: [
+      { name: "Never Liquidated (12 Months)", predicate: "liquidations(12mo) == 0", description: "No liquidations in the last year.", completedCount: 9_122 },
+      { name: "On-Time Repayments ≥ 5", predicate: "onTimeRepayments >= 5", description: "Clean repayment streak.", completedCount: 6_114 },
+      { name: "On-Time Repayments ≥ 25", predicate: "onTimeRepayments >= 25", description: "Long clean repayment streak.", completedCount: 1_980 },
+    ],
+  },
+  {
+    id: "grp-governance",
+    title: "DAO Governance",
+    subtitle: "Prove sustained DAO participation without revealing votes.",
+    providerId: "prov-databook",
+    category: "Activity",
+    imageUrl: "/logos/databook.png",
+    levels: [
+      { name: "Voted in 10+ Proposals", predicate: "daoVotes >= 10", description: "Active governance participant.", completedCount: 5_430 },
+      { name: "Voted in 50+ Proposals", predicate: "daoVotes >= 50", description: "Highly active governance participant.", completedCount: 1_810 },
+    ],
+  },
+  {
+    id: "grp-wallet-age",
+    title: "Wallet Age",
+    subtitle: "Prove your wallet is older than N months.",
+    providerId: "prov-databook",
+    category: "Identity",
+    imageUrl: "/logos/databook.png",
+    levels: [
+      { name: "Wallet Older Than 1 Year", predicate: "walletAge >= 12mo", description: "Established wallet.", completedCount: 78_201 },
+      { name: "Wallet Older Than 2 Years", predicate: "walletAge >= 24mo", description: "Long-term wallet.", completedCount: 32_781 },
+      { name: "Wallet Older Than 4 Years", predicate: "walletAge >= 48mo", description: "Veteran wallet.", completedCount: 9_410 },
+    ],
   },
 ];
 
-function groupIdFromTitle(title: string) {
-  return (
-    "g_" +
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "")
-  );
-}
+export const zkProofGroups: ZkProofGroup[] = GROUP_SEEDS.map((g) => ({
+  id: g.id,
+  title: g.title,
+  subtitle: g.subtitle,
+  providerId: g.providerId,
+  category: g.category,
+  imageUrl: g.imageUrl,
+}));
 
-function groupImageForTitle(title: string): string {
-  const t = title.toLowerCase();
-  if (t.includes("x ")) return "/logos/x.svg";
-  if (t.startsWith("x ")) return "/logos/x.svg";
-  if (t.includes("instagram")) return "/logos/instagram.svg";
-  if (t.includes("youtube")) return "/logos/youtube.svg";
-  if (t.includes("bank")) return "/logos/bank.svg";
-  return "/logos/databook.svg";
-}
-
-function groupProviderForTitle(title: string): ProofProvider["id"] {
-  const t = title.toLowerCase();
-  if (t.includes("x ")) return "prov-x";
-  if (t.startsWith("x ")) return "prov-x";
-  if (t.includes("instagram")) return "prov-instagram";
-  if (t.includes("youtube")) return "prov-databook";
-  if (t.includes("bank")) return "prov-bank";
-  return "prov-databook";
-}
-
-export const zkProofGroups: ZkProofGroup[] = (() => {
-  const labels = Array.from(new Set(zkTemplates.map((t) => t.categoryLabel)));
-  return labels
-    .map((title) => ({
-      id: groupIdFromTitle(title),
-      title,
-      description: "Zero-knowledge proofs grouped by level.",
-      providerId: groupProviderForTitle(title),
-      imageUrl: groupImageForTitle(title),
-    }))
-    .sort((a, b) => a.title.localeCompare(b.title));
+export const zkProofLevelsByGroupId: Record<string, ZkProofLevel[]> = (() => {
+  const map: Record<string, ZkProofLevel[]> = {};
+  for (const g of GROUP_SEEDS) {
+    map[g.id] = g.levels.map((l, i) => ({
+      id: `${g.id}-l${i + 1}`,
+      groupId: g.id,
+      rank: i + 1,
+      name: l.name,
+      description: l.description,
+      predicate: l.predicate,
+      completedCount: l.completedCount,
+    }));
+  }
+  return map;
 })();
 
-export const zkProofTemplatesByGroupId: Record<string, ZkProofTemplate[]> =
-  (() => {
-    const map: Record<string, ZkProofTemplate[]> = {};
-    for (const g of zkProofGroups) map[g.id] = [];
-    for (const t of zkTemplates) {
-      const gid = groupIdFromTitle(t.categoryLabel);
-      (map[gid] ??= []).push(t);
-    }
-    for (const gid of Object.keys(map)) {
-      map[gid] = map[gid].slice().sort((a, b) => a.levelRank - b.levelRank);
-    }
-    return map;
-  })();
-
-// Build a richer issued proofs dataset (40 entries) for list/search/filter/pagination.
-const PROOF_TEMPLATES: {
-  id: string;
-  title: string;
-  predicate: string;
-  category: IssuedProof["category"];
-}[] = [
-  ...zkTemplates.map((t) => ({
-    id: t.id,
-    title: t.title,
-    predicate: t.predicate,
-    category: t.category as IssuedProof["category"],
-  })),
+export const PROOF_CATEGORIES: ZkProofGroup["category"][] = [
+  "Finance",
+  "Social",
+  "Identity",
+  "Activity",
 ];
 
-const CONSUMER_POOL: { app: string; category: string }[] = [
-  { app: "Aave V3", category: "Lending" },
-  { app: "Compound", category: "Lending" },
-  { app: "Snapshot", category: "Governance" },
-  { app: "OpenSea Pro", category: "NFT" },
-  { app: "Lens Protocol", category: "Social" },
-  { app: "GMX", category: "Perps" },
-  { app: "ENS Marketplace", category: "Identity" },
-  { app: "Maker DAO", category: "Lending" },
-  { app: "Uniswap", category: "DEX" },
-  { app: "dYdX", category: "Perps" },
-  { app: "Tally", category: "Governance" },
-  { app: "Friend.tech", category: "Social" },
-];
-
-const ZK_SYSTEMS: IssuedProof["zkSystem"][] = ["Groth16", "PLONK", "Halo2"];
-
-function makeProofId(seed: number): string {
-  const hex = (seed * 9301 + 49297) % 233280;
-  const slug = hex.toString(16).padStart(6, "0");
-  return `zkp_${slug}${(seed * 7).toString(16).padStart(2, "0")}`;
-}
-
-function makeProofHash(seed: number): string {
-  let h = "0x";
-  for (let i = 0; i < 32; i++) {
-    h += (((seed + i) * 2654435761) % 16).toString(16);
-  }
-  return h;
-}
-
-function relativeTime(daysAgo: number): string {
-  if (daysAgo < 1) return "Today";
-  if (daysAgo === 1) return "Yesterday";
-  if (daysAgo < 7) return `${daysAgo} days ago`;
-  if (daysAgo < 14) return "1 week ago";
-  if (daysAgo < 30) return `${Math.floor(daysAgo / 7)} weeks ago`;
-  if (daysAgo < 60) return "1 month ago";
-  return `${Math.floor(daysAgo / 30)} months ago`;
-}
-
-function buildIssuedProofs(): IssuedProof[] {
-  const now = Date.now();
-  const dayMs = 86_400_000;
-  const proofs: IssuedProof[] = [];
-
-  for (let i = 0; i < 40; i++) {
-    const tpl = PROOF_TEMPLATES[i % PROOF_TEMPLATES.length];
-    const issuedDaysAgo = Math.floor((i * 3 + (i % 4)) * 1.1) + 1;
-    const lifetime = 30; // most proofs have 30d lifetime
-    const expiresInDays = lifetime - issuedDaysAgo;
-
-    let status: ProofStatus;
-    if (i % 13 === 0) status = "revoked";
-    else if (expiresInDays < 0) status = "expired";
-    else if (i % 17 === 0) status = "pending";
-    else status = "active";
-
-    const consumer =
-      i % 5 === 0 ? undefined : CONSUMER_POOL[i % CONSUMER_POOL.length];
-    const issuedAtMs = now - issuedDaysAgo * dayMs;
-
-    proofs.push({
-      id: `ip${(i + 1).toString().padStart(3, "0")}`,
-      templateId: tpl.id,
-      template: tpl.title,
-      predicate: tpl.predicate,
-      category: tpl.category,
-      issuedAt: relativeTime(issuedDaysAgo),
-      issuedAtMs,
-      expiresAt:
-        expiresInDays >= 0
-          ? `in ${expiresInDays} days`
-          : `${Math.abs(expiresInDays)} days ago`,
-      expiresInDays,
-      consumer: consumer?.app,
-      consumerCategory: consumer?.category,
-      status,
-      proofHash: makeProofHash(i + 1),
-      verifications:
-        status === "active"
-          ? (i * 7) % 48
-          : status === "expired"
-            ? (i * 3) % 12
-            : 0,
-      size: `${(1.8 + ((i * 0.13) % 1.4)).toFixed(1)} KB`,
-      zkSystem: ZK_SYSTEMS[i % ZK_SYSTEMS.length],
-    });
-  }
-  return proofs;
-}
-
-export const issuedProofs: IssuedProof[] = buildIssuedProofs();
-
-// ----- Persona canned answers -----
+// ---------- Persona canned answers ----------
 
 export interface AiInsight {
   question: string;

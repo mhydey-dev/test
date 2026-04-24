@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,7 +19,6 @@ const navItems = [
   { title: "Credit Score", url: "/score", icon: Shield },
   { title: "ZK Proofs", url: "/proofs", icon: Lock },
   { title: "Data Access", url: "/access", icon: Activity },
-  { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "Persona", url: "/persona", icon: Sparkles },
 ];
 

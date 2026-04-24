@@ -28,7 +28,6 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-  Lock,
 } from "lucide-react";
 import {
   proofProviders,
@@ -224,6 +223,7 @@ const Proofs = () => {
               const isOpen = openGroupId === g.id;
               const provider = providerById.get(g.providerId);
               const previewLevels = g.levels.slice(0, 3);
+              const expandedLevels = g.levels.slice(0, 3);
 
               return (
                 <motion.div
@@ -238,7 +238,12 @@ const Proofs = () => {
                     onClick={() =>
                       setOpenGroupId((prev) => (prev === g.id ? null : g.id))
                     }
-                    className="rounded-2xl border-border/60 p-5 cursor-pointer hover:border-border hover:bg-muted/20 transition-colors relative z-20"
+                    className={
+                      "border-border/60 p-5 cursor-pointer hover:border-border transition-colors relative z-20 " +
+                      (!isOpen && previewLevels.length > 0
+                        ? "rounded-t-2xl rounded-b-none border-b-0"
+                        : "rounded-2xl")
+                    }
                   >
                     <div className="flex items-start gap-4">
                       <div className="h-12 w-12 rounded-xl overflow-hidden border border-border/40 bg-muted/40 shrink-0">
@@ -299,118 +304,92 @@ const Proofs = () => {
                     </div>
                   </Card>
 
-                  {/* COLLAPSED stack — full-width child cards stacked UNDER the parent,
-                      showing only a thin progress strip per level */}
+                  {/* COLLAPSED stack — child cards peek only ~8px under the parent.
+                      No transparency, no rounded top, full-width matches parent. */}
                   {!isOpen && previewLevels.length > 0 && (
-                    <div className="relative">
+                    <div
+                      className="relative"
+                      onClick={() =>
+                        setOpenGroupId((prev) =>
+                          prev === g.id ? null : g.id,
+                        )
+                      }
+                      role="button"
+                    >
                       {previewLevels.map((l, idx) => {
-                        const layer = idx;
-                        const pct = Math.round(
-                          ((l.rank) / g.levels.length) * 100,
-                        );
+                        const isLast = idx === previewLevels.length - 1;
+                        const inset = (idx + 1) * 8;
                         return (
                           <div
                             key={l.id}
-                            className="rounded-2xl border border-border/60 bg-card/80 px-5 py-2.5 shadow-sm"
+                            className={
+                              "border border-border/60 border-t-0 bg-card px-5 cursor-pointer " +
+                              (isLast
+                                ? "rounded-b-2xl pt-2 pb-2"
+                                : "rounded-b-none pt-2 pb-0")
+                            }
                             style={{
-                              marginTop: layer === 0 ? -10 : -14,
-                              marginLeft: 12 + layer * 6,
-                              marginRight: 12 + layer * 6,
-                              opacity: 1 - layer * 0.18,
-                              zIndex: 10 - layer,
+                              marginLeft: inset,
+                              marginRight: inset,
+                              height: isLast ? "auto" : 8,
+                              overflow: "hidden",
                               position: "relative",
+                              zIndex: 10 - idx,
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
-                              <span className="truncate">{l.name}</span>
-                              <span className="shrink-0">
-                                Level {l.rank} ·{" "}
-                                {l.completedCount.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className="mt-1.5 h-1 rounded-full bg-muted overflow-hidden">
-                              <div
-                                className="h-full bg-primary"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
+                            {isLast && (
+                              <div className="flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+                                <span className="truncate">{l.name}</span>
+                                <span className="shrink-0">
+                                  Level {l.rank}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
                     </div>
                   )}
 
-                  {/* EXPANDED — full-width individual level cards */}
+                  {/* EXPANDED — one-liner level rows */}
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -4 }}
-                        className="space-y-2 pt-2"
+                        className="space-y-1.5 pt-2"
                       >
-                        {g.levels.slice(0, 3).map((l) => (
-                          <Card
+                        {expandedLevels.map((l) => (
+                          <div
                             key={l.id}
-                            className="rounded-2xl border-border/60 p-4"
+                            className="rounded-xl border border-border/60 bg-card px-4 py-2 flex items-center gap-3"
                           >
-                            <div className="flex items-start gap-3">
-                              <div className="h-9 w-9 rounded-xl overflow-hidden border border-border/40 bg-muted/40 shrink-0">
-                                <img
-                                  src={g.imageUrl}
-                                  alt={`${g.title} logo`}
-                                  className="h-full w-full object-cover"
-                                  loading="lazy"
-                                  width={36}
-                                  height={36}
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <p className="text-sm font-medium text-foreground truncate">
-                                    {l.name}
-                                  </p>
-                                  <Badge
-                                    variant="outline"
-                                    className="rounded-full text-[10px] border-border/60 text-muted-foreground"
-                                  >
-                                    Level {l.rank}
-                                  </Badge>
-                                </div>
-                                <code className="block text-[11px] text-muted-foreground font-mono mt-1 truncate">
-                                  {l.predicate}
-                                </code>
-                                <p className="text-[11px] text-muted-foreground mt-1">
-                                  <span className="text-foreground font-medium">
-                                    {l.completedCount.toLocaleString()}
-                                  </span>{" "}
-                                  completed
-                                </p>
-                              </div>
-                            </div>
-                          </Card>
+                            <Badge
+                              variant="outline"
+                              className="rounded-full text-[10px] border-border/60 text-muted-foreground shrink-0"
+                            >
+                              L{l.rank}
+                            </Badge>
+                            <p className="text-sm text-foreground truncate flex-1 min-w-0">
+                              {l.name}
+                            </p>
+                            <span className="text-[11px] text-muted-foreground shrink-0 hidden sm:inline">
+                              {l.completedCount.toLocaleString()} completed
+                            </span>
+                          </div>
                         ))}
 
-                        {g.levels.length > 3 && (
-                          <Button
-                            variant="outline"
-                            className="rounded-xl w-full"
-                            onClick={() => navigate(`/proof-groups/${g.id}`)}
-                          >
-                            View all {g.levels.length} levels
-                            <ArrowUpRight className="h-4 w-4 ml-1.5" />
-                          </Button>
-                        )}
-                        {g.levels.length <= 3 && (
-                          <Button
-                            variant="outline"
-                            className="rounded-xl w-full"
-                            onClick={() => navigate(`/proof-groups/${g.id}`)}
-                          >
-                            Open group
-                            <ArrowUpRight className="h-4 w-4 ml-1.5" />
-                          </Button>
-                        )}
+                        <Button
+                          variant="outline"
+                          className="rounded-xl w-full"
+                          onClick={() => navigate(`/proof-groups/${g.id}`)}
+                        >
+                          {g.levels.length > 3
+                            ? `View all ${g.levels.length} levels`
+                            : "Open group"}
+                          <ArrowUpRight className="h-4 w-4 ml-1.5" />
+                        </Button>
                       </motion.div>
                     )}
                   </AnimatePresence>

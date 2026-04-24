@@ -13,6 +13,7 @@ import {
   Ban,
   CheckCircle2,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import {
   proofProviders,
@@ -197,6 +198,54 @@ const ProofGroupDetail = () => {
             </div>
           </Card>
         </motion.div>
+
+        {/* Provider info */}
+        {provider && (
+          <Card className="rounded-2xl border-border/60 p-5">
+            <div className="flex items-start gap-4 flex-wrap">
+              <div className="h-12 w-12 rounded-xl overflow-hidden border border-border/40 bg-muted/40 shrink-0">
+                <img
+                  src={provider.imageUrl}
+                  alt={`${provider.name} logo`}
+                  className="h-full w-full object-cover"
+                  width={48}
+                  height={48}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-display font-semibold text-foreground">
+                    {provider.name}
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className="rounded-full text-[10px] border-border/60 text-muted-foreground"
+                  >
+                    Provider
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {provider.about}
+                </p>
+              </div>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="rounded-xl shrink-0"
+              >
+                <a
+                  href={provider.websiteUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Visit
+                  <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
+                </a>
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Levels */}
         <div className="space-y-2">

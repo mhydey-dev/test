@@ -45,7 +45,7 @@ const Overview = () => {
           transition={{ duration: 0.4 }}
         >
           <div className="overflow-hidden relative">
-            <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
               <div>
                 <Badge
                   variant="outline"

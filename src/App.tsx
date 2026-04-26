@@ -17,6 +17,7 @@ import Settings from "./pages/app/Settings";
 import PersonaMint from "./pages/app/PersonaMint";
 import Notifications from "./pages/app/Notifications";
 import { dAppKit } from "./dapp-kit";
+import ScrollToTop from "./components/app/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<AppLayout />}>
                 <Route index element={<Overview />} />

@@ -53,11 +53,11 @@ const Overview = () => {
                 >
                   <Shield className="h-3 w-3 mr-1" /> Tier · {SCORE_TIER}
                 </Badge>
-                <div className="flex items-baseline gap-3">
-                  <span className="font-display text-7xl md:text-8xl font-bold text-foreground tracking-tight">
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <span className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-foreground tracking-tight leading-none">
                     {MAIN_SCORE}
                   </span>
-                  <span className="text-muted-foreground text-2xl">/ 1000</span>
+                  <span className="text-muted-foreground text-xl sm:text-2xl">/ 1000</span>
                 </div>
                 <p className="text-muted-foreground mt-3">
                   You're in the top{" "}

@@ -248,12 +248,11 @@ const Notifications = () => {
     <>
       <div className="flex-1 px-4 md:px-8 pb-8 space-y-6">
         {/* Toolbar */}
-        <div className="p-1">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="space-y-3">
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
             <Tabs
               value={filter}
               onValueChange={(v) => setFilter(v as Filter)}
-              className="w-full sm:w-auto"
             >
               <TabsList className="rounded-xl">
                 <TabsTrigger value="all" className="rounded-lg">
@@ -273,29 +272,32 @@ const Notifications = () => {
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+          </div>
 
-            <div className="flex gap-2 ml-auto">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl"
-                onClick={markAllRead}
-                disabled={unreadCount === 0}
-              >
-                <CheckCircle2 className="h-4 w-4 mr-1.5" />
-                Mark all read
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl text-muted-foreground"
-                onClick={clearAll}
-                disabled={items.length === 0}
-              >
-                <Trash2 className="h-4 w-4 mr-1.5" />
-                Clear
-              </Button>
-            </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl"
+              onClick={markAllRead}
+              disabled={unreadCount === 0}
+            >
+              <CheckCircle2 className="h-4 w-4 mr-1.5" />
+              Mark all read
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl text-muted-foreground"
+              onClick={clearAll}
+              disabled={items.length === 0}
+            >
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              Clear
+            </Button>
+            <p className="text-xs text-muted-foreground ml-auto self-center">
+              {filtered.length} notification{filtered.length === 1 ? "" : "s"}
+            </p>
           </div>
         </div>
 

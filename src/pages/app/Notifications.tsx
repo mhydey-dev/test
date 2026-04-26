@@ -303,7 +303,7 @@ const Notifications = () => {
 
         {/* List */}
         <div className="space-y-2">
-          {filtered.length === 0 ? (
+          {pageItems.length === 0 ? (
             <Card className="rounded-2xl border-border/60 border-dashed p-12 text-center">
               <div className="h-12 w-12 rounded-2xl bg-muted mx-auto flex items-center justify-center mb-3">
                 <BellOff className="h-5 w-5 text-muted-foreground" />
@@ -318,7 +318,7 @@ const Notifications = () => {
               </p>
             </Card>
           ) : (
-            filtered.map((n, i) => {
+            pageItems.map((n, i) => {
               const meta = TYPE_META[n.type];
               const Icon = meta.icon;
               return (
@@ -335,7 +335,7 @@ const Notifications = () => {
                       : "border-border/50 bg-card/70 hover:bg-muted/20")
                   }
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     <div
                       className={
                         "h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border " +
@@ -346,7 +346,7 @@ const Notifications = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-display font-semibold text-foreground">
+                        <p className="font-display font-semibold text-foreground text-sm sm:text-base">
                           {n.title}
                         </p>
                         <Badge
@@ -390,6 +390,77 @@ const Notifications = () => {
             })
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(Math.max(1, currentPage - 1));
+                  }}
+                  className={
+                    currentPage === 1
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }
+                  href="#"
+                />
+              </PaginationItem>
+
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const n = idx + 1;
+                const show =
+                  n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1;
+                const showLeftEllipsis = n === currentPage - 2 && n > 1;
+                const showRightEllipsis =
+                  n === currentPage + 2 && n < totalPages;
+
+                if (showLeftEllipsis || showRightEllipsis) {
+                  return (
+                    <PaginationItem key={`e-${n}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+                if (!show) return null;
+
+                return (
+                  <PaginationItem key={n}>
+                    <PaginationLink
+                      href="#"
+                      isActive={n === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(n);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {n}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(Math.min(totalPages, currentPage + 1));
+                  }}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }
+                  href="#"
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </>
   );

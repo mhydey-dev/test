@@ -274,8 +274,8 @@ const ProofGroupDetail = () => {
 
               <Button
                 variant="outline"
-                className="rounded-xl text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
-                onClick={revoke}
+                className="rounded-xl text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive w-full sm:w-auto"
+                onClick={() => setRevokeOpen(true)}
                 disabled={status !== "active"}
               >
                 <Ban className="h-4 w-4 mr-1.5" />

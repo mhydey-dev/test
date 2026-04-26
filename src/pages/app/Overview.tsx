@@ -11,6 +11,9 @@ import {
   ArrowUpRight,
   Lock,
   Sparkles,
+  ShieldCheck,
+  KeyRound,
+  Coins,
 } from "lucide-react";
 import {
   MAIN_SCORE,
@@ -31,9 +34,185 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
+import { useCreditToken } from "@/hooks/useCreditToken";
 
 const Overview = () => {
   const recentConsumers = dataConsumers.slice(0, 4);
+  const token = useCreditToken();
+
+  if (!token.mounted) return null;
+
+  if (!token.minted) {
+    return (
+      <div className="flex-1 px-4 md:px-8 py-6 md:py-10 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="max-w-3xl">
+            <Badge
+              variant="outline"
+              className="rounded-full border-primary/30 text-primary bg-primary/5 mb-4"
+            >
+              <Sparkles className="h-3 w-3 mr-1" /> Welcome to Databook
+            </Badge>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight">
+              Your on-chain reputation,
+              <br className="hidden sm:block" />
+              <span className="text-primary"> tokenized & private.</span>
+            </h1>
+            <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
+              Mint your Credit Score token to unlock your personalized dashboard,
+              share verifiable proofs, and start earning from your data.
+            </p>
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Button asChild size="lg" className="rounded-xl gap-2">
+                <Link to="/score">
+                  <Sparkles className="h-4 w-4" />
+                  Mint Credit Score token
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="rounded-xl"
+              >
+                <Link to="/proofs">Explore proofs</Link>
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Benefits */}
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            {
+              icon: ShieldCheck,
+              title: "Privacy first",
+              sub: "Share only what you choose with ZK proofs. Your raw data stays yours.",
+            },
+            {
+              icon: TrendingUp,
+              title: "Reputation that grows",
+              sub: "Your score evolves with on-chain behavior across DeFi, DAOs, and more.",
+            },
+            {
+              icon: Coins,
+              title: "Earn from your data",
+              sub: "dApps pay to query your verified data. You stay in control of access.",
+            },
+          ].map((b, i) => (
+            <motion.div
+              key={b.title}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * i }}
+            >
+              <Card className="rounded-2xl border-border/60 p-5 h-full">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+                  <b.icon className="h-5 w-5 text-primary" />
+                </div>
+                <p className="mt-4 text-sm font-semibold text-foreground">
+                  {b.title}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  {b.sub}
+                </p>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* How it works */}
+        <Card className="rounded-2xl border-border/60 p-5 sm:p-6">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            How it works
+          </p>
+          <div className="mt-4 grid sm:grid-cols-3 gap-4">
+            {[
+              {
+                n: 1,
+                icon: KeyRound,
+                title: "Connect your wallet",
+                sub: "Non-custodial. We never touch your keys.",
+              },
+              {
+                n: 2,
+                icon: Sparkles,
+                title: "Mint your token",
+                sub: "One-time, gas only. Updates as you transact.",
+              },
+              {
+                n: 3,
+                icon: Lock,
+                title: "Generate ZK proofs",
+                sub: "Share what's needed without exposing details.",
+              },
+            ].map((s) => (
+              <div key={s.n} className="flex items-start gap-3">
+                <div className="h-8 w-8 shrink-0 rounded-full bg-primary/10 text-primary text-xs font-semibold flex items-center justify-center border border-primary/20">
+                  {s.n}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {s.title}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {s.sub}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Locked preview */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              Unlocks after minting
+            </p>
+            <Badge
+              variant="outline"
+              className="rounded-full text-[10px] gap-1 border-border/60"
+            >
+              <Lock className="h-3 w-3" /> Locked
+            </Badge>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: "Credit Score", icon: Shield },
+              { label: "Earnings", icon: DollarSign },
+              { label: "Active Consumers", icon: Activity },
+              { label: "Score Trend", icon: TrendingUp },
+            ].map((stat) => (
+              <Card
+                key={stat.label}
+                className="rounded-2xl border-border/60 border-dashed p-5 relative overflow-hidden"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-muted-foreground uppercase tracking-wide">
+                    {stat.label}
+                  </span>
+                  <stat.icon className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <p className="font-display text-2xl font-bold text-muted-foreground/40">
+                  ——
+                </p>
+                <p className="text-xs text-muted-foreground/60 mt-1">
+                  Available after mint
+                </p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

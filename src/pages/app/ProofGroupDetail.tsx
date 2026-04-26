@@ -429,6 +429,30 @@ const ProofGroupDetail = () => {
           </footer>
         )}
       </div>
+
+      <AlertDialog open={revokeOpen} onOpenChange={setRevokeOpen}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke this proof group?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will deactivate <span className="text-foreground font-medium">{group.title}</span>
+              {activeLevel ? (
+                <> at <span className="text-foreground font-medium">{activeLevel.name}</span></>
+              ) : null}
+              . dApps relying on it will lose access until you generate a new proof.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={revoke}
+              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Revoke proof
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

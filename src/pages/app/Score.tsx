@@ -189,7 +189,7 @@ const Score = () => {
   return (
     <>
       <div className="flex-1 px-4 md:px-8 py-6  space-y-6">
-        <div className="grid md:grid-cols-3 rounded-xl border border-border/40 p-6 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 rounded-xl border border-border/40 p-5 sm:p-6 gap-5 sm:gap-6">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

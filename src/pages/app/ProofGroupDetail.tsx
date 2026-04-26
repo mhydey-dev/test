@@ -4,6 +4,16 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -48,6 +58,7 @@ const ProofGroupDetail = () => {
   const [status, setStatus] = useState<GroupStatus>("none");
   const [activeLevelId, setActiveLevelId] = useState<string | null>(null);
   const [busyLevelId, setBusyLevelId] = useState<string | null>(null);
+  const [revokeOpen, setRevokeOpen] = useState(false);
 
   const activeLevel = useMemo(
     () => levels.find((l) => l.id === activeLevelId) ?? null,
@@ -76,7 +87,7 @@ const ProofGroupDetail = () => {
   const parseThresholdFromPredicate = (predicate: string): number | null => {
     const m = predicate.match(/>=\s*([\d_]+)/);
     if (!m) return null;
-    return Number(m[1].replaceAll("_", ""));
+    return Number(m[1].split("_").join(""));
   };
 
   const generate = async (l: ZkProofLevel) => {
@@ -163,6 +174,7 @@ const ProofGroupDetail = () => {
   const revoke = () => {
     setStatus("revoked");
     setActiveLevelId(null);
+    setRevokeOpen(false);
     toast.success("Group revoked", {
       description: "All levels are unlocked again.",
     });

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -8,8 +8,16 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  TabsContent,
 } from "@/components/ui/tabs";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 import { toast } from "sonner";
 import {
   Bell,
@@ -21,6 +29,8 @@ import {
   Trash2,
   BellOff,
 } from "lucide-react";
+
+const PAGE_SIZE = 6;
 
 type NotificationType = "alert" | "request" | "info";
 
@@ -112,6 +122,78 @@ const SEED: NotificationItem[] = [
     cta: { label: "View earnings", to: "/access" },
     unread: false,
   },
+  {
+    id: "n7",
+    type: "request",
+    title: "Proof requested: Bank balance above $1,000",
+    description: "Aave asked for proof of solvency to unlock under-collateralized borrow.",
+    time: "1 week ago",
+    cta: { label: "Open group", to: "/proofs/bank-balance" },
+    unread: false,
+  },
+  {
+    id: "n8",
+    type: "info",
+    title: "New consumer connected",
+    description: "Lens Protocol joined your data marketplace and queried social signals.",
+    time: "8 days ago",
+    cta: { label: "View access", to: "/access" },
+    unread: false,
+  },
+  {
+    id: "n9",
+    type: "alert",
+    title: "Suspicious access blocked",
+    description: "An unverified app tried to query your private proofs and was blocked.",
+    time: "10 days ago",
+    cta: { label: "Review", to: "/access" },
+    unread: false,
+  },
+  {
+    id: "n10",
+    type: "request",
+    title: "Proof requested: X account age > 2 years",
+    description: "Farcaster asked you to prove account longevity for creator badge.",
+    time: "12 days ago",
+    cta: { label: "Open group", to: "/proofs/x-age" },
+    unread: false,
+  },
+  {
+    id: "n11",
+    type: "info",
+    title: "Persona insight ready",
+    description: "Your weekly behavioral summary is ready to review.",
+    time: "2 weeks ago",
+    cta: { label: "Open Persona", to: "/persona" },
+    unread: false,
+  },
+  {
+    id: "n12",
+    type: "alert",
+    title: "Score updated",
+    description: "Your credit score increased by +3 to 785 this week.",
+    time: "2 weeks ago",
+    cta: { label: "View score", to: "/score" },
+    unread: false,
+  },
+  {
+    id: "n13",
+    type: "info",
+    title: "Earnings paid out",
+    description: "$2.10 from data queries was settled to your wallet.",
+    time: "3 weeks ago",
+    cta: { label: "View earnings", to: "/access" },
+    unread: false,
+  },
+  {
+    id: "n14",
+    type: "request",
+    title: "Proof requested: Verified human",
+    description: "Gitcoin Passport asked you to prove sybil-resistance for grant matching.",
+    time: "1 month ago",
+    cta: { label: "Open group", to: "/proofs/identity" },
+    unread: false,
+  },
 ];
 
 type Filter = "all" | "unread" | NotificationType;
@@ -120,6 +202,7 @@ const Notifications = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<NotificationItem[]>(SEED);
   const [filter, setFilter] = useState<Filter>("all");
+  const [page, setPage] = useState(1);
 
   const unreadCount = useMemo(
     () => items.filter((i) => i.unread).length,
@@ -131,6 +214,18 @@ const Notifications = () => {
     if (filter === "unread") return items.filter((i) => i.unread);
     return items.filter((i) => i.type === filter);
   }, [items, filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
+  // Reset to page 1 whenever the filter changes or items shrink past current page.
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
 
   const markAllRead = () => {
     setItems((prev) => prev.map((i) => ({ ...i, unread: false })));
@@ -153,12 +248,11 @@ const Notifications = () => {
     <>
       <div className="flex-1 px-4 md:px-8 pb-8 space-y-6">
         {/* Toolbar */}
-        <div className="p-1">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="space-y-3">
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
             <Tabs
               value={filter}
               onValueChange={(v) => setFilter(v as Filter)}
-              className="w-full sm:w-auto"
             >
               <TabsList className="rounded-xl">
                 <TabsTrigger value="all" className="rounded-lg">
@@ -178,35 +272,38 @@ const Notifications = () => {
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+          </div>
 
-            <div className="flex gap-2 ml-auto">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl"
-                onClick={markAllRead}
-                disabled={unreadCount === 0}
-              >
-                <CheckCircle2 className="h-4 w-4 mr-1.5" />
-                Mark all read
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl text-muted-foreground"
-                onClick={clearAll}
-                disabled={items.length === 0}
-              >
-                <Trash2 className="h-4 w-4 mr-1.5" />
-                Clear
-              </Button>
-            </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl"
+              onClick={markAllRead}
+              disabled={unreadCount === 0}
+            >
+              <CheckCircle2 className="h-4 w-4 mr-1.5" />
+              Mark all read
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl text-muted-foreground"
+              onClick={clearAll}
+              disabled={items.length === 0}
+            >
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              Clear
+            </Button>
+            <p className="text-xs text-muted-foreground ml-auto self-center">
+              {filtered.length} notification{filtered.length === 1 ? "" : "s"}
+            </p>
           </div>
         </div>
 
         {/* List */}
         <div className="space-y-2">
-          {filtered.length === 0 ? (
+          {pageItems.length === 0 ? (
             <Card className="rounded-2xl border-border/60 border-dashed p-12 text-center">
               <div className="h-12 w-12 rounded-2xl bg-muted mx-auto flex items-center justify-center mb-3">
                 <BellOff className="h-5 w-5 text-muted-foreground" />
@@ -221,7 +318,7 @@ const Notifications = () => {
               </p>
             </Card>
           ) : (
-            filtered.map((n, i) => {
+            pageItems.map((n, i) => {
               const meta = TYPE_META[n.type];
               const Icon = meta.icon;
               return (
@@ -238,7 +335,7 @@ const Notifications = () => {
                       : "border-border/50 bg-card/70 hover:bg-muted/20")
                   }
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     <div
                       className={
                         "h-10 w-10 rounded-xl flex items-center justify-center shrink-0 border " +
@@ -249,7 +346,7 @@ const Notifications = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-display font-semibold text-foreground">
+                        <p className="font-display font-semibold text-foreground text-sm sm:text-base">
                           {n.title}
                         </p>
                         <Badge
@@ -293,6 +390,77 @@ const Notifications = () => {
             })
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(Math.max(1, currentPage - 1));
+                  }}
+                  className={
+                    currentPage === 1
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }
+                  href="#"
+                />
+              </PaginationItem>
+
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const n = idx + 1;
+                const show =
+                  n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1;
+                const showLeftEllipsis = n === currentPage - 2 && n > 1;
+                const showRightEllipsis =
+                  n === currentPage + 2 && n < totalPages;
+
+                if (showLeftEllipsis || showRightEllipsis) {
+                  return (
+                    <PaginationItem key={`e-${n}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+                if (!show) return null;
+
+                return (
+                  <PaginationItem key={n}>
+                    <PaginationLink
+                      href="#"
+                      isActive={n === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(n);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {n}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage(Math.min(totalPages, currentPage + 1));
+                  }}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }
+                  href="#"
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </>
   );

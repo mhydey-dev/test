@@ -59,7 +59,7 @@ const SEED: NotificationItem[] = [
     description:
       "A dApp asked you to prove your X follower count to unlock creator-tier access.",
     time: "5 minutes ago",
-    cta: { label: "Open group", to: "/proof-groups/x-followers" },
+    cta: { label: "Open group", to: "/proofs/x-followers" },
     unread: true,
   },
   {
@@ -77,7 +77,7 @@ const SEED: NotificationItem[] = [
     title: "Proof expiring soon",
     description: "Your “Wallet Older Than 1 Year” proof expires in 3 days.",
     time: "Yesterday",
-    cta: { label: "Renew", to: "/proof-groups/wallet-age" },
+    cta: { label: "Renew", to: "/proofs/wallet-age" },
     unread: false,
   },
 ];

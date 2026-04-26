@@ -33,7 +33,7 @@ const App = () => (
                 <Route index element={<Overview />} />
                 <Route path="score" element={<Score />} />
                 <Route path="proofs" element={<Proofs />} />
-                <Route path="proof-groups/:id" element={<ProofGroupDetail />} />
+                <Route path="proofs/:id" element={<ProofGroupDetail />} />
                 <Route path="access" element={<Access />} />
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="persona" element={<Persona />} />

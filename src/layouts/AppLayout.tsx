@@ -24,7 +24,7 @@ const getHeaderMeta = (pathname: string) => {
       subtitle: "Prove what you need to - reveal nothing else",
     };
   }
-  if (pathname.startsWith("/proof-groups/")) {
+  if (pathname.startsWith("/proofs/")) {
     const id = pathname.split("/")[2];
     const group = zkProofGroups.find((g) => g.id === id);
     if (!group) {

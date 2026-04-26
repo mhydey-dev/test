@@ -23,7 +23,7 @@ export async function generateXFollowerCountProof(
   payload: GenerateXFollowerProofRequest,
 ): Promise<GenerateXFollowerProofResponse> {
   const response = await fetch(
-    `${PROVER_API_BASE_URL}/proof-groups/x_follower_count/generate`,
+    `${PROVER_API_BASE_URL}/proofs/x_follower_count/generate`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -54,7 +54,7 @@ export async function generateInstagramFollowerCountProof(
   payload: GenerateInstagramFollowerProofRequest,
 ): Promise<GenerateInstagramFollowerProofResponse> {
   const response = await fetch(
-    `${PROVER_API_BASE_URL}/proof-groups/instagram_follower_count/generate`,
+    `${PROVER_API_BASE_URL}/proofs/instagram_follower_count/generate`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,7 +95,7 @@ export async function generateXAccountAgeProof(
   payload: GenerateXAccountAgeProofRequest,
 ): Promise<GenerateXAccountAgeProofResponse> {
   const response = await fetch(
-    `${PROVER_API_BASE_URL}/proof-groups/x_account_age/generate`,
+    `${PROVER_API_BASE_URL}/proofs/x_account_age/generate`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

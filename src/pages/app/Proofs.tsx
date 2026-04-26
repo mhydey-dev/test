@@ -143,7 +143,7 @@ const Proofs = () => {
                 >
                   {/* Parent group card */}
                   <Card
-                    onClick={() => navigate(`/proof-groups/${g.id}`)}
+                    onClick={() => navigate(`/proofs/${g.id}`)}
                     className={
                       "border-border/60 p-5 cursor-pointer hover:border-border transition-colors relative z-20 " +
                       (previewLevels.length > 0
@@ -209,7 +209,7 @@ const Proofs = () => {
                   {previewLevels.length > 0 && (
                     <div
                       className="relative"
-                      onClick={() => navigate(`/proof-groups/${g.id}`)}
+                      onClick={() => navigate(`/proofs/${g.id}`)}
                       role="button"
                     >
                       {previewLevels.map((l, idx) => {

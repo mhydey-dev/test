@@ -20,6 +20,11 @@ import {
   zkProofLevelsByGroupId,
   type ZkProofLevel,
 } from "@/lib/reputation-mock";
+import {
+  generateInstagramFollowerCountProof,
+  generateXAccountAgeProof,
+  generateXFollowerCountProof,
+} from "@/lib/prover-api";
 
 type GroupStatus = "none" | "active" | "revoked";
 
@@ -68,15 +73,91 @@ const ProofGroupDetail = () => {
 
   const provider = providerById.get(group.providerId);
 
+  const parseThresholdFromPredicate = (predicate: string): number | null => {
+    const m = predicate.match(/>=\s*([\d_]+)/);
+    if (!m) return null;
+    return Number(m[1].replaceAll("_", ""));
+  };
+
   const generate = async (l: ZkProofLevel) => {
     setBusyLevelId(l.id);
-    await new Promise((r) => setTimeout(r, 800));
-    setStatus("active");
-    setActiveLevelId(l.id);
-    setBusyLevelId(null);
-    toast.success("Proof generated", {
-      description: `${l.name} is now your active level.`,
-    });
+    try {
+      if (group.id === "x-followers") {
+        const threshold = parseThresholdFromPredicate(l.predicate);
+        if (!threshold) {
+          throw new Error(`Invalid threshold predicate: ${l.predicate}`);
+        }
+        const username = window.prompt("Enter X username (without @):", "");
+        if (!username) {
+          setBusyLevelId(null);
+          return;
+        }
+
+        const proof = await generateXFollowerCountProof({
+          username,
+          levelId: `gt_${threshold}`,
+        });
+
+        toast.success("Proof generated from prover API", {
+          description: `@${proof.username} followers=${proof.followers_count}, threshold>${proof.threshold}`,
+        });
+      } else if (group.id === "instagram-followers") {
+        const threshold = parseThresholdFromPredicate(l.predicate);
+        if (!threshold) {
+          throw new Error(`Invalid threshold predicate: ${l.predicate}`);
+        }
+        const username = window.prompt(
+          "Enter Instagram username (without @):",
+          "",
+        );
+        if (!username) {
+          setBusyLevelId(null);
+          return;
+        }
+
+        const proof = await generateInstagramFollowerCountProof({
+          username,
+          levelId: `gt_${threshold}`,
+        });
+
+        toast.success("Proof generated from prover API", {
+          description: `@${proof.username} followers=${proof.followers_count}, threshold>${proof.threshold}`,
+        });
+      } else if (group.id === "x-age") {
+        const threshold = parseThresholdFromPredicate(l.predicate);
+        if (!threshold) {
+          throw new Error(`Invalid threshold predicate: ${l.predicate}`);
+        }
+        const username = window.prompt("Enter X username (without @):", "");
+        if (!username) {
+          setBusyLevelId(null);
+          return;
+        }
+
+        const proof = await generateXAccountAgeProof({
+          username,
+          levelId: `gt_${threshold}`,
+        });
+
+        toast.success("Proof generated from prover API", {
+          description: `@${proof.username} account age=${proof.account_age_months}mo, min>${proof.min_age_months}mo`,
+        });
+      } else {
+        await new Promise((r) => setTimeout(r, 800));
+        toast.success("Mock proof generated", {
+          description: `${l.name} is now your active level.`,
+        });
+      }
+
+      setStatus("active");
+      setActiveLevelId(l.id);
+    } catch (error) {
+      toast.error("Failed to generate proof", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
+      setBusyLevelId(null);
+    }
   };
 
   const revoke = () => {

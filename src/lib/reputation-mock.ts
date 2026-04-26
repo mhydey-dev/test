@@ -369,6 +369,7 @@ export const proofProviders: ProofProvider[] = [
 
 interface GroupSeed {
   id: string;
+  // aggregatorId: string;
   title: string;
   subtitle: string;
   providerId: string;
@@ -376,6 +377,7 @@ interface GroupSeed {
   imageUrl: string;
   /** Each tier becomes a level — name is the readable claim shown to the user */
   levels: {
+    // id: string;
     name: string;
     predicate: string;
     description: string;
@@ -385,7 +387,7 @@ interface GroupSeed {
 
 const GROUP_SEEDS: GroupSeed[] = [
   {
-    id: "grp-bank-balance",
+    id: "bank-balance",
     title: "Bank Balance",
     subtitle: "Prove your bank balance exceeds a tier — without revealing it.",
     providerId: "prov-bank",
@@ -425,7 +427,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-x-followers",
+    id: "x-followers",
     title: "X Followers",
     subtitle: "Prove your X (Twitter) follower count meets a milestone.",
     providerId: "prov-x",
@@ -459,7 +461,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-x-age",
+    id: "x-age",
     title: "X Account Age",
     subtitle: "Prove your X account has existed for at least N months.",
     providerId: "prov-x",
@@ -493,7 +495,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-instagram-followers",
+    id: "instagram-followers",
     title: "Instagram Followers",
     subtitle: "Prove your Instagram follower count meets a milestone.",
     providerId: "prov-instagram",
@@ -521,7 +523,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-youtube-subs",
+    id: "youtube-subs",
     title: "YouTube Subscribers",
     subtitle: "Prove your YouTube channel meets a subscriber milestone.",
     providerId: "prov-youtube",
@@ -555,7 +557,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-credit-score",
+    id: "credit-score",
     title: "Credit Score",
     subtitle: "Prove your aggregated credit score is above a threshold.",
     providerId: "prov-databook",
@@ -583,7 +585,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-land",
+    id: "land",
     title: "Land Ownership",
     subtitle: "Prove you own land without revealing the parcel.",
     providerId: "prov-land",
@@ -611,7 +613,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-student",
+    id: "student",
     title: "Student Status",
     subtitle:
       "Prove you are an active student without disclosing the institution.",
@@ -634,7 +636,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-identity",
+    id: "identity",
     title: "Unique Human",
     subtitle:
       "Prove this wallet is sybil-resistant and represents a unique human.",
@@ -657,7 +659,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-defi",
+    id: "defi",
     title: "DeFi Reputation",
     subtitle: "Prove sustained, healthy DeFi behavior on-chain.",
     providerId: "prov-databook",
@@ -685,7 +687,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-governance",
+    id: "governance",
     title: "DAO Governance",
     subtitle: "Prove sustained DAO participation without revealing votes.",
     providerId: "prov-databook",
@@ -707,7 +709,7 @@ const GROUP_SEEDS: GroupSeed[] = [
     ],
   },
   {
-    id: "grp-wallet-age",
+    id: "wallet-age",
     title: "Wallet Age",
     subtitle: "Prove your wallet is older than N months.",
     providerId: "prov-databook",

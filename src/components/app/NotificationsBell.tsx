@@ -26,13 +26,13 @@ export interface NotificationItem {
   title: string;
   description: string;
   time: string;
-  cta?: { label: string; to: string };
+  cta?: { label: string; to: string; };
   unread: boolean;
 }
 
 const TYPE_META: Record<
   NotificationType,
-  { label: string; icon: typeof Bell; className: string }
+  { label: string; icon: typeof Bell; className: string; }
 > = {
   alert: {
     label: "Alert",
@@ -59,7 +59,7 @@ const SEED: NotificationItem[] = [
     description:
       "A dApp asked you to prove your X follower count to unlock creator-tier access.",
     time: "5 minutes ago",
-    cta: { label: "Open group", to: "/proof-groups/grp-x-followers" },
+    cta: { label: "Open group", to: "/proof-groups/x-followers" },
     unread: true,
   },
   {
@@ -77,7 +77,7 @@ const SEED: NotificationItem[] = [
     title: "Proof expiring soon",
     description: "Your “Wallet Older Than 1 Year” proof expires in 3 days.",
     time: "Yesterday",
-    cta: { label: "Renew", to: "/proof-groups/grp-wallet-age" },
+    cta: { label: "Renew", to: "/proof-groups/wallet-age" },
     unread: false,
   },
 ];

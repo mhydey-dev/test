@@ -202,6 +202,7 @@ const Notifications = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<NotificationItem[]>(SEED);
   const [filter, setFilter] = useState<Filter>("all");
+  const [page, setPage] = useState(1);
 
   const unreadCount = useMemo(
     () => items.filter((i) => i.unread).length,
@@ -213,6 +214,18 @@ const Notifications = () => {
     if (filter === "unread") return items.filter((i) => i.unread);
     return items.filter((i) => i.type === filter);
   }, [items, filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
+  // Reset to page 1 whenever the filter changes or items shrink past current page.
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
 
   const markAllRead = () => {
     setItems((prev) => prev.map((i) => ({ ...i, unread: false })));
